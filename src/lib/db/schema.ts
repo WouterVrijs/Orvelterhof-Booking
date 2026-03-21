@@ -171,6 +171,58 @@ export const accommodationSettings = pgTable("accommodation_settings", {
     .$onUpdate(() => new Date()),
 });
 
+// --- Cost Items ---
+
+export const costItemTypeEnum = pgEnum("cost_item_type", [
+  "FIXED",
+  "PER_PERSON",
+  "PER_NIGHT",
+  "PER_PERSON_PER_NIGHT",
+  "PER_UNIT",
+]);
+
+export const costItemCategoryEnum = pgEnum("cost_item_category", [
+  "BASE",
+  "MANDATORY",
+  "UPGRADE",
+]);
+
+export const costItems = pgTable("cost_items", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  type: costItemTypeEnum("type").notNull(),
+  price: numeric("price", { precision: 10, scale: 2 }).notNull().default("0"),
+  category: costItemCategoryEnum("category").notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
+// --- Reservation Line Items ---
+
+export const reservationLineItems = pgTable("reservation_line_items", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  reservationId: uuid("reservation_id")
+    .notNull()
+    .references(() => reservations.id, { onDelete: "cascade" }),
+  costItemId: uuid("cost_item_id").references(() => costItems.id, {
+    onDelete: "set null",
+  }),
+  name: varchar("name", { length: 255 }).notNull(),
+  quantity: integer("quantity").notNull().default(1),
+  unitPrice: numeric("unit_price", { precision: 10, scale: 2 }).notNull(),
+  totalPrice: numeric("total_price", { precision: 10, scale: 2 }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
 // --- Audit Logs ---
 
 export const auditLogs = pgTable("audit_logs", {
@@ -200,3 +252,5 @@ export type BlockedPeriod = typeof blockedPeriods.$inferSelect;
 export type NewBlockedPeriod = typeof blockedPeriods.$inferInsert;
 export type PricingSettings = typeof pricingSettings.$inferSelect;
 export type AccommodationSettings = typeof accommodationSettings.$inferSelect;
+export type CostItem = typeof costItems.$inferSelect;
+export type ReservationLineItem = typeof reservationLineItems.$inferSelect;

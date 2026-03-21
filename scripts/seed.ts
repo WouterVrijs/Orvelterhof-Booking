@@ -127,9 +127,32 @@ async function seed() {
       .onConflictDoNothing({ target: schema.reservations.reservationNumber });
   }
 
+  // --- Cost Items ---
+  const costItemsData = [
+    { name: "Verblijf", type: "PER_NIGHT" as const, price: "650.00", category: "BASE" as const, sortOrder: 0 },
+    { name: "Eindschoonmaak", type: "FIXED" as const, price: "425.00", category: "MANDATORY" as const, sortOrder: 1 },
+    { name: "Bedlinnen", type: "PER_PERSON" as const, price: "14.50", category: "MANDATORY" as const, sortOrder: 2 },
+    { name: "Energie", type: "PER_PERSON_PER_NIGHT" as const, price: "3.95", category: "MANDATORY" as const, sortOrder: 3 },
+    { name: "Gem. heffingen", type: "PER_PERSON_PER_NIGHT" as const, price: "2.95", category: "MANDATORY" as const, sortOrder: 4 },
+    { name: "Keukenlinnen", type: "PER_UNIT" as const, price: "5.50", category: "UPGRADE" as const, sortOrder: 10 },
+    { name: "Barbecue", type: "PER_UNIT" as const, price: "35.00", category: "UPGRADE" as const, sortOrder: 11 },
+    { name: "Badlinnen", type: "PER_PERSON" as const, price: "3.75", category: "UPGRADE" as const, sortOrder: 12 },
+    { name: "Activiteit", type: "PER_PERSON" as const, price: "20.00", category: "UPGRADE" as const, sortOrder: 13 },
+    { name: "Kinderbedden", type: "PER_UNIT" as const, price: "7.50", category: "UPGRADE" as const, sortOrder: 14 },
+    { name: "Ontbijt", type: "PER_PERSON_PER_NIGHT" as const, price: "0.00", category: "UPGRADE" as const, sortOrder: 15 },
+  ];
+
+  for (const item of costItemsData) {
+    await db
+      .insert(schema.costItems)
+      .values(item)
+      .onConflictDoNothing();
+  }
+
   console.log("Seed complete:");
   console.log("  User: admin@orvelterhof.nl / admin123");
   console.log(`  Reservations: ${reservations.length} records`);
+  console.log(`  Cost items: ${costItemsData.length} records`);
   await client.end();
 }
 

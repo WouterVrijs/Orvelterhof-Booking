@@ -39,6 +39,7 @@ export default async function CalendarPage() {
     startDate: new Date(b.startDate),
     endDate: new Date(b.endDate),
     blockType: b.blockType as BlockType,
+    reason: b.reason,
   }));
 
   // Plain objects for the blocked periods list (client component)
