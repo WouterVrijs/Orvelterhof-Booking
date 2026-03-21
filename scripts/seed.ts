@@ -127,7 +127,8 @@ async function seed() {
       .onConflictDoNothing({ target: schema.reservations.reservationNumber });
   }
 
-  // --- Cost Items ---
+  // --- Cost Items (clear and re-insert to avoid duplicates) ---
+  await db.delete(schema.costItems);
   const costItemsData = [
     { name: "Verblijf", type: "PER_NIGHT" as const, price: "650.00", category: "BASE" as const, sortOrder: 0 },
     { name: "Eindschoonmaak", type: "FIXED" as const, price: "425.00", category: "MANDATORY" as const, sortOrder: 1 },
@@ -149,7 +150,9 @@ async function seed() {
       .onConflictDoNothing();
   }
 
-  // --- Seasons 2026 ---
+  // --- Seasons 2026 (clear and re-insert) ---
+  await db.delete(schema.stayTypePrices);
+  await db.delete(schema.seasons);
   const seasonData = [
     // Periode 1 (laagseizoen) - two date ranges
     { year: 2026, name: "Periode 1", startDate: "2026-01-03", endDate: "2026-03-07", sortOrder: 0 },
@@ -194,7 +197,8 @@ async function seed() {
     }
   }
 
-  // --- Special Arrangements 2026 ---
+  // --- Special Arrangements 2026 (clear and re-insert) ---
+  await db.delete(schema.specialArrangements);
   const arrangementsData = [
     { year: 2026, name: "Pasen", startDate: "2026-04-03", endDate: "2026-04-06", isBooked: true, sortOrder: 0 },
     { year: 2026, name: "Hemelvaart", startDate: "2026-05-13", endDate: "2026-05-17", isBooked: true, sortOrder: 1 },
