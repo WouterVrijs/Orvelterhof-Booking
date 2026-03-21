@@ -223,6 +223,70 @@ export const reservationLineItems = pgTable("reservation_line_items", {
     .defaultNow(),
 });
 
+// --- Seasons ---
+
+export const seasons = pgTable("seasons", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  year: integer("year").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  startDate: date("start_date").notNull(),
+  endDate: date("end_date").notNull(),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
+// --- Stay Type Prices ---
+
+export const stayTypeEnum = pgEnum("stay_type", [
+  "WEEKEND",
+  "LONG_WEEKEND",
+  "MIDWEEK",
+  "WEEK",
+]);
+
+export const stayTypePrices = pgTable("stay_type_prices", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  seasonId: uuid("season_id")
+    .notNull()
+    .references(() => seasons.id, { onDelete: "cascade" }),
+  stayType: stayTypeEnum("stay_type").notNull(),
+  nights: integer("nights").notNull(),
+  price: numeric("price", { precision: 10, scale: 2 }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
+// --- Special Arrangements ---
+
+export const specialArrangements = pgTable("special_arrangements", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  year: integer("year").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  startDate: date("start_date").notNull(),
+  endDate: date("end_date").notNull(),
+  price: numeric("price", { precision: 10, scale: 2 }),
+  isBooked: boolean("is_booked").notNull().default(false),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
 // --- Audit Logs ---
 
 export const auditLogs = pgTable("audit_logs", {
@@ -254,3 +318,6 @@ export type PricingSettings = typeof pricingSettings.$inferSelect;
 export type AccommodationSettings = typeof accommodationSettings.$inferSelect;
 export type CostItem = typeof costItems.$inferSelect;
 export type ReservationLineItem = typeof reservationLineItems.$inferSelect;
+export type Season = typeof seasons.$inferSelect;
+export type StayTypePrice = typeof stayTypePrices.$inferSelect;
+export type SpecialArrangement = typeof specialArrangements.$inferSelect;

@@ -149,10 +149,73 @@ async function seed() {
       .onConflictDoNothing();
   }
 
+  // --- Seasons 2026 ---
+  const seasonData = [
+    // Periode 1 (laagseizoen) - two date ranges
+    { year: 2026, name: "Periode 1", startDate: "2026-01-03", endDate: "2026-03-07", sortOrder: 0 },
+    { year: 2026, name: "Periode 1", startDate: "2026-11-21", endDate: "2026-12-22", sortOrder: 0 },
+    // Periode 2 (tussenseizoen) - two date ranges
+    { year: 2026, name: "Periode 2", startDate: "2026-03-07", endDate: "2026-04-04", sortOrder: 1 },
+    { year: 2026, name: "Periode 2", startDate: "2026-11-03", endDate: "2026-11-21", sortOrder: 1 },
+    // Periode 3 (hoogseizoen)
+    { year: 2026, name: "Periode 3", startDate: "2026-04-04", endDate: "2026-11-03", sortOrder: 2 },
+  ];
+
+  const createdSeasons: { id: string; name: string }[] = [];
+  for (const s of seasonData) {
+    const [created] = await db.insert(schema.seasons).values(s).returning({ id: schema.seasons.id, name: schema.seasons.name });
+    createdSeasons.push(created);
+  }
+
+  // Stay type prices — use first season row per name for prices
+  const stayTypePricesData: Record<string, { WEEKEND: number; LONG_WEEKEND: number; MIDWEEK: number; WEEK: number }> = {
+    "Periode 1": { WEEKEND: 2850, LONG_WEEKEND: 2950, MIDWEEK: 2200, WEEK: 4200 },
+    "Periode 2": { WEEKEND: 3200, LONG_WEEKEND: 3300, MIDWEEK: 2500, WEEK: 5400 },
+    "Periode 3": { WEEKEND: 3300, LONG_WEEKEND: 3400, MIDWEEK: 2600, WEEK: 5800 },
+  };
+
+  const nightsMap = { WEEKEND: 2, LONG_WEEKEND: 3, MIDWEEK: 4, WEEK: 7 };
+  const seenSeasonNames = new Set<string>();
+
+  for (const cs of createdSeasons) {
+    if (seenSeasonNames.has(cs.name)) continue;
+    seenSeasonNames.add(cs.name);
+
+    const prices = stayTypePricesData[cs.name];
+    if (!prices) continue;
+
+    for (const [stayType, price] of Object.entries(prices)) {
+      await db.insert(schema.stayTypePrices).values({
+        seasonId: cs.id,
+        stayType: stayType as "WEEKEND" | "LONG_WEEKEND" | "MIDWEEK" | "WEEK",
+        nights: nightsMap[stayType as keyof typeof nightsMap],
+        price: price.toFixed(2),
+      });
+    }
+  }
+
+  // --- Special Arrangements 2026 ---
+  const arrangementsData = [
+    { year: 2026, name: "Pasen", startDate: "2026-04-03", endDate: "2026-04-06", isBooked: true, sortOrder: 0 },
+    { year: 2026, name: "Hemelvaart", startDate: "2026-05-13", endDate: "2026-05-17", isBooked: true, sortOrder: 1 },
+    { year: 2026, name: "Pinksteren", startDate: "2026-06-22", endDate: "2026-06-25", isBooked: true, sortOrder: 2 },
+    { year: 2026, name: "Kerst (week)", startDate: "2026-12-21", endDate: "2026-12-28", price: "5500.00", isBooked: false, sortOrder: 3 },
+    { year: 2026, name: "Kerst (weekend)", startDate: "2026-12-25", endDate: "2026-12-28", price: "3500.00", isBooked: false, sortOrder: 4 },
+    { year: 2026, name: "Oud en Nieuw", startDate: "2026-12-28", endDate: "2027-01-01", price: "5500.00", isBooked: false, sortOrder: 5 },
+    { year: 2026, name: "Oud en Nieuw (lang)", startDate: "2026-12-28", endDate: "2027-01-03", price: "6800.00", isBooked: false, sortOrder: 6 },
+    { year: 2026, name: "Midweken vakanties", startDate: "2026-01-01", endDate: "2026-12-31", price: "2750.00", isBooked: false, sortOrder: 7 },
+  ];
+
+  for (const arr of arrangementsData) {
+    await db.insert(schema.specialArrangements).values(arr).onConflictDoNothing();
+  }
+
   console.log("Seed complete:");
   console.log("  User: admin@orvelterhof.nl / admin123");
   console.log(`  Reservations: ${reservations.length} records`);
   console.log(`  Cost items: ${costItemsData.length} records`);
+  console.log(`  Seasons: ${seasonData.length} records`);
+  console.log(`  Special arrangements: ${arrangementsData.length} records`);
   await client.end();
 }
 
