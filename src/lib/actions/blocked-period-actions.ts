@@ -6,6 +6,7 @@ import { blockedPeriods, reservations } from "@/lib/db/schema";
 import { and, eq, lt, gt } from "drizzle-orm";
 import { createBlockedPeriodSchema } from "@/lib/validations/calendar";
 import { formatDateISO } from "@/lib/utils/dates";
+import { logAudit } from "@/lib/services/audit";
 import { z } from "zod";
 
 export type ActionState = {
@@ -66,11 +67,19 @@ export async function createBlockedPeriodAction(
     };
   }
 
-  await db.insert(blockedPeriods).values({
+  const [created] = await db.insert(blockedPeriods).values({
     startDate: formatDateISO(data.startDate),
     endDate: formatDateISO(data.endDate),
     reason: data.reason || null,
     blockType: data.blockType,
+  }).returning({ id: blockedPeriods.id });
+
+  await logAudit({
+    action: "blocked_period.created",
+    entityType: "blocked_period",
+    entityId: created.id,
+    description: `Periode geblokkeerd: ${formatDateISO(data.startDate)} t/m ${formatDateISO(data.endDate)}`,
+    metadata: { blockType: data.blockType, reason: data.reason || null },
   });
 
   revalidatePath("/calendar");
@@ -140,6 +149,13 @@ export async function updateBlockedPeriodAction(
     })
     .where(eq(blockedPeriods.id, data.id));
 
+  await logAudit({
+    action: "blocked_period.updated",
+    entityType: "blocked_period",
+    entityId: data.id,
+    description: `Geblokkeerde periode bijgewerkt: ${formatDateISO(data.startDate)} t/m ${formatDateISO(data.endDate)}`,
+  });
+
   revalidatePath("/calendar");
   return { success: true };
 }
@@ -160,6 +176,13 @@ export async function deleteBlockedPeriodAction(
   }
 
   await db.delete(blockedPeriods).where(eq(blockedPeriods.id, id));
+
+  await logAudit({
+    action: "blocked_period.deleted",
+    entityType: "blocked_period",
+    entityId: id,
+    description: "Geblokkeerde periode verwijderd",
+  });
 
   revalidatePath("/calendar");
   return { success: true };

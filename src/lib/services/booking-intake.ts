@@ -3,6 +3,13 @@ import { reservations } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { isDateRangeAvailable } from "@/lib/services/availability";
+import { logAudit } from "@/lib/services/audit";
+import {
+  sendMail,
+  buildBookingRequestEmail,
+  buildManagerNotificationEmail,
+} from "@/lib/services/mail";
+import { calculatePrice } from "@/lib/services/pricing";
 import { generateReservationNumber } from "@/lib/utils/reservation-number";
 import { formatDateISO } from "@/lib/utils/dates";
 
@@ -77,7 +84,10 @@ export async function processBookingRequest(
     reservationNumber = generateReservationNumber();
   }
 
-  // 4. Create reservation
+  // 4. Calculate price
+  const price = await calculatePrice(data.arrivalDate, data.departureDate);
+
+  // 5. Create reservation
   const [created] = await db
     .insert(reservations)
     .values({
@@ -89,6 +99,7 @@ export async function processBookingRequest(
       arrivalDate: formatDateISO(data.arrivalDate),
       departureDate: formatDateISO(data.departureDate),
       numberOfGuests: data.numberOfGuests,
+      totalPrice: price.totalPrice.toFixed(2),
       guestNote: data.guestNote || null,
       source: "WEBSITE",
       status: "NEW",
@@ -98,11 +109,40 @@ export async function processBookingRequest(
       reservationNumber: reservations.reservationNumber,
     });
 
-  // 5. TODO (Epic e-mails): trigger email workflows
-  // - Bevestigingsmail naar gast
-  // - Notificatiemail naar beheerder
-  console.log(
-    `[booking-intake] New booking request ${reservationNumber} from ${data.email}`
+  await logAudit({
+    action: "reservation.created",
+    entityType: "reservation",
+    entityId: created.id,
+    description: `Boekingsaanvraag ${reservationNumber} ontvangen via website van ${data.firstName} ${data.lastName}`,
+    metadata: { source: "WEBSITE", email: data.email },
+  });
+
+  // Send confirmation email to guest
+  const guestEmail = buildBookingRequestEmail({
+    firstName: data.firstName,
+    reservationNumber,
+    arrivalDate: formatDateISO(data.arrivalDate),
+    departureDate: formatDateISO(data.departureDate),
+    numberOfGuests: data.numberOfGuests,
+  });
+  await sendMail({ to: data.email, ...guestEmail }).catch((err) =>
+    console.error("[booking-intake] Failed to send guest email:", err)
+  );
+
+  // Send notification to manager
+  const managerEmail = process.env.EMAIL_FROM || "admin@orvelterhof.nl";
+  const managerNotification = buildManagerNotificationEmail({
+    firstName: data.firstName,
+    lastName: data.lastName,
+    email: data.email,
+    reservationNumber,
+    arrivalDate: formatDateISO(data.arrivalDate),
+    departureDate: formatDateISO(data.departureDate),
+    numberOfGuests: data.numberOfGuests,
+    reservationId: created.id,
+  });
+  await sendMail({ to: managerEmail, ...managerNotification }).catch((err) =>
+    console.error("[booking-intake] Failed to send manager email:", err)
   );
 
   return {

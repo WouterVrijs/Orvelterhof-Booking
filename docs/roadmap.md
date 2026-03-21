@@ -43,6 +43,25 @@
   - Duidelijke foutmelding bij verlopen/ongeldige/gebruikte token
   - Link naar opnieuw aanvragen, geen technische foutpagina
 
+### Epic 3b – Accountbeheer
+
+- [ ] **US 3b.1** Nieuwe gebruiker aanmaken
+  - Beheerder kan via de instellingen een nieuwe gebruiker aanmaken
+  - Formulier met naam, e-mailadres en initieel wachtwoord
+  - E-mailadres moet uniek zijn, wachtwoord moet voldoen aan minimale eisen (8+ karakters)
+  - Wachtwoord wordt veilig gehasht opgeslagen
+- [ ] **US 3b.2** Gebruikersoverzicht bekijken
+  - Lijst van alle gebruikers met naam, e-mailadres, status (actief/inactief) en aanmaakdatum
+  - Duidelijk zichtbaar welke gebruikers actief zijn
+- [ ] **US 3b.3** Gebruiker deactiveren en activeren
+  - Beheerder kan een gebruiker deactiveren (niet verwijderen)
+  - Gedeactiveerde gebruiker kan niet meer inloggen
+  - Beheerder kan een gedeactiveerde gebruiker opnieuw activeren
+- [ ] **US 3b.4** Wachtwoord van gebruiker resetten
+  - Beheerder kan het wachtwoord van een andere gebruiker resetten
+  - Nieuw wachtwoord moet voldoen aan minimale eisen
+  - Gebruiker kan daarna inloggen met het nieuwe wachtwoord
+
 ---
 
 ## Module 2 — Dashboard
@@ -148,20 +167,20 @@
 
 ### Epic 11 – Reserveringsdetailpagina
 
-- [ ] **US 11.1** Reserveringsdetails bekijken
+- [x] **US 11.1** Reserveringsdetails bekijken
   - Overzicht van alle reserveringsgegevens (gastnaam, datums, gasten, prijs, status, notities)
   - Reserveringsnummer, bron en tijdstempels zichtbaar
-- [ ] **US 11.2** Reserveringsstatus bijwerken
+- [x] **US 11.2** Reserveringsstatus bijwerken
   - Status wijzigen: nieuw → in behandeling → bevestigd of geannuleerd
   - Gecontroleerde overgangen (niet willekeurig van status wisselen)
 
 ### Epic 12 – Reservering bevestigen en annuleren
 
-- [ ] **US 12.1** Reservering bevestigen
+- [x] **US 12.1** Reservering bevestigen
   - Bevestigen maakt de geselecteerde periode onbeschikbaar
   - Server-side overlapcontrole bij bevestigen
   - Bevestigingsmail naar gast triggeren
-- [ ] **US 12.2** Reservering annuleren
+- [x] **US 12.2** Reservering annuleren
   - Annulering met optionele reden
   - Beschikbaarheid wordt vrijgegeven
   - Annuleringsmail naar gast triggeren
@@ -172,16 +191,16 @@
 
 ### Epic 13 – Transactionele e-mails
 
-- [ ] **US 13.1** Bevestigingsmail naar gast bij boekingsaanvraag
+- [x] **US 13.1** Bevestigingsmail naar gast bij boekingsaanvraag
   - Automatische e-mail na ontvangst van boekingsaanvraag
   - Bevat: naam, datums, reserveringsnummer
-- [ ] **US 13.2** Notificatiemail naar beheerder bij nieuwe aanvraag
+- [x] **US 13.2** Notificatiemail naar beheerder bij nieuwe aanvraag
   - Automatische e-mail naar beheerder bij nieuwe boekingsaanvraag
   - Bevat: gastgegevens, datums, link naar reservering
-- [ ] **US 13.3** Bevestigingsmail bij reserveringsbevestiging
+- [x] **US 13.3** Bevestigingsmail bij reserveringsbevestiging
   - E-mail naar gast bij statuswijziging naar "bevestigd"
   - Bevat: bevestigde datums, eventuele aanvullende informatie
-- [ ] **US 13.4** Annuleringsmail bij annulering
+- [x] **US 13.4** Annuleringsmail bij annulering
   - E-mail naar gast bij annulering
   - Neutrale, nette toon
 
@@ -197,13 +216,13 @@
 
 ### Epic 15 – Prijsinstellingen beheren
 
-- [ ] **US 15.1** Basisprijs instellen
+- [x] **US 15.1** Basisprijs instellen
   - Basisprijs configureren (per nacht of vast per verblijf)
   - Eén prijsstrategie voor de MVP
-- [ ] **US 15.2** Schoonmaakkosten en borgsom instellen
+- [x] **US 15.2** Schoonmaakkosten en borgsom instellen
   - Schoonmaakkosten en borgsom configureerbaar
   - Worden meegenomen in totaalberekening van reserveringen
-- [ ] **US 15.3** Totaalprijs berekenen bij reservering
+- [x] **US 15.3** Totaalprijs berekenen bij reservering
   - Automatische berekening op basis van nachten × basisprijs + schoonmaakkosten
   - Borgsom apart zichtbaar
 
@@ -213,13 +232,13 @@
 
 ### Epic 16 – Accommodatie-instellingen beheren
 
-- [ ] **US 16.1** Algemene accommodatiegegevens beheren
+- [x] **US 16.1** Algemene accommodatiegegevens beheren
   - Accommodatienaam, contacte-mail en contacttelefoonnummer instellen
-- [ ] **US 16.2** Boekingsregels instellen
+- [x] **US 16.2** Boekingsregels instellen
   - Standaard inchecktijd en uitchecktijd (HH:MM formaat)
   - Maximaal aantal gasten
   - Minimum verblijfsduur (nachten)
-- [ ] **US 16.3** Standaard kosten instellen
+- [x] **US 16.3** Standaard kosten instellen
   - Standaard schoonmaakkosten en borgsom
   - Worden gebruikt als default bij nieuwe reserveringen
 
@@ -229,10 +248,10 @@
 
 ### Epic 17 – Actielogging
 
-- [ ] **US 17.1** Belangrijke acties loggen
+- [x] **US 17.1** Belangrijke acties loggen
   - Logging van: reservering aangemaakt, bevestigd, geannuleerd, geblokkeerde periode aangemaakt/verwijderd
   - Per actie: wat, wanneer, door wie
-- [ ] **US 17.2** Statuswijzigingen bijhouden
+- [x] **US 17.2** Statuswijzigingen bijhouden
   - Tijdstempel van laatste statuswijziging per reservering
   - Overzicht van statushistorie per reservering
 
@@ -271,3 +290,9 @@
 | 9. Instellingen | 1 | 0 | ⬜ Te bouwen |
 | 10. Audit | 1 | 0 | ⬜ Te bouwen |
 | **Totaal** | **17** | **6** | **35%** |
+
+
+
+## inlog codes
+E-mail: admin@orvelterhof.nl
+Wachtwoord: admin123

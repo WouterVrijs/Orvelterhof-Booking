@@ -8,6 +8,15 @@ import { and, eq, lt, gt, ne } from "drizzle-orm";
 import { createReservationSchema } from "@/lib/validations/reservation";
 import { generateReservationNumber } from "@/lib/utils/reservation-number";
 import { formatDateISO } from "@/lib/utils/dates";
+import { hasReservationOverlap } from "@/lib/services/availability";
+import { calculatePrice } from "@/lib/services/pricing";
+import { logAudit } from "@/lib/services/audit";
+import {
+  sendMail,
+  buildConfirmationEmail,
+  buildCancellationEmail,
+} from "@/lib/services/mail";
+import { ALLOWED_TRANSITIONS, type ReservationStatus } from "@/lib/types";
 import { z } from "zod";
 
 // --- Shared types ---
@@ -17,35 +26,6 @@ export type ActionState = {
   message?: string;
   success?: boolean;
 } | null;
-
-// --- Overlap check ---
-
-async function hasOverlap(
-  arrivalDate: Date,
-  departureDate: Date,
-  excludeId?: string
-): Promise<boolean> {
-  const arrival = formatDateISO(arrivalDate);
-  const departure = formatDateISO(departureDate);
-
-  const conditions = [
-    eq(reservations.status, "CONFIRMED"),
-    lt(reservations.arrivalDate, departure),
-    gt(reservations.departureDate, arrival),
-  ];
-
-  if (excludeId) {
-    conditions.push(ne(reservations.id, excludeId));
-  }
-
-  const [result] = await db
-    .select({ id: reservations.id })
-    .from(reservations)
-    .where(and(...conditions))
-    .limit(1);
-
-  return !!result;
-}
 
 // --- Create ---
 
@@ -73,7 +53,7 @@ export async function createReservationAction(
 
   const data = result.data;
 
-  const overlap = await hasOverlap(data.arrivalDate, data.departureDate);
+  const overlap = await hasReservationOverlap(data.arrivalDate, data.departureDate);
   if (overlap) {
     return {
       message:
@@ -93,6 +73,9 @@ export async function createReservationAction(
     reservationNumber = generateReservationNumber();
   }
 
+  // Calculate total price based on pricing settings
+  const price = await calculatePrice(data.arrivalDate, data.departureDate);
+
   const [created] = await db
     .insert(reservations)
     .values({
@@ -104,12 +87,21 @@ export async function createReservationAction(
       arrivalDate: formatDateISO(data.arrivalDate),
       departureDate: formatDateISO(data.departureDate),
       numberOfGuests: data.numberOfGuests,
+      totalPrice: price.totalPrice.toFixed(2),
       guestNote: data.guestNote || null,
       internalNote: data.internalNote || null,
       source: data.source,
       status: "NEW",
     })
     .returning({ id: reservations.id });
+
+  await logAudit({
+    action: "reservation.created",
+    entityType: "reservation",
+    entityId: created.id,
+    description: `Reservering ${reservationNumber} aangemaakt voor ${data.firstName} ${data.lastName}`,
+    metadata: { source: data.source, arrivalDate: formatDateISO(data.arrivalDate), departureDate: formatDateISO(data.departureDate) },
+  });
 
   redirect(`/reservations/${created.id}`);
 }
@@ -171,7 +163,7 @@ export async function updateReservationAction(
 
   // Overlap check (exclude self) — only relevant if reservation is confirmed
   if (existing.status === "CONFIRMED") {
-    const overlap = await hasOverlap(
+    const overlap = await hasReservationOverlap(
       data.arrivalDate,
       data.departureDate,
       data.id
@@ -200,5 +192,163 @@ export async function updateReservationAction(
     .where(eq(reservations.id, data.id));
 
   revalidatePath(`/reservations/${data.id}`);
+  return { success: true };
+}
+
+// --- Update status ---
+
+export async function updateReservationStatusAction(
+  reservationId: string,
+  newStatus: ReservationStatus
+): Promise<ActionState> {
+  // Verify reservation exists — fetch full details for email
+  const [existing] = await db
+    .select({
+      id: reservations.id,
+      status: reservations.status,
+      reservationNumber: reservations.reservationNumber,
+      firstName: reservations.firstName,
+      email: reservations.email,
+      arrivalDate: reservations.arrivalDate,
+      departureDate: reservations.departureDate,
+      numberOfGuests: reservations.numberOfGuests,
+    })
+    .from(reservations)
+    .where(eq(reservations.id, reservationId))
+    .limit(1);
+
+  if (!existing) {
+    return { message: "Reservering niet gevonden" };
+  }
+
+  const currentStatus = existing.status as ReservationStatus;
+
+  // Validate transition
+  const allowed = ALLOWED_TRANSITIONS[currentStatus];
+  if (!allowed.includes(newStatus)) {
+    return {
+      message: `Status kan niet worden gewijzigd van "${currentStatus}" naar "${newStatus}"`,
+    };
+  }
+
+  // If confirming, check for overlapping confirmed reservations
+  if (newStatus === "CONFIRMED") {
+    const overlap = await hasReservationOverlap(
+      new Date(existing.arrivalDate),
+      new Date(existing.departureDate)
+    );
+    if (overlap) {
+      return {
+        message:
+          "Kan niet bevestigen: er is al een bevestigde reservering in deze periode.",
+      };
+    }
+  }
+
+  await db
+    .update(reservations)
+    .set({
+      status: newStatus,
+      statusChangedAt: new Date(),
+    })
+    .where(eq(reservations.id, reservationId));
+
+  // Send confirmation email to guest
+  if (newStatus === "CONFIRMED") {
+    const email = buildConfirmationEmail({
+      firstName: existing.firstName,
+      reservationNumber: existing.reservationNumber,
+      arrivalDate: existing.arrivalDate,
+      departureDate: existing.departureDate,
+      numberOfGuests: existing.numberOfGuests,
+    });
+    await sendMail({ to: existing.email, ...email }).catch((err) =>
+      console.error("[reservation] Failed to send confirmation email:", err)
+    );
+  }
+
+  await logAudit({
+    action: newStatus === "CONFIRMED" ? "reservation.confirmed" : "reservation.status_changed",
+    entityType: "reservation",
+    entityId: reservationId,
+    description: `Status gewijzigd van ${currentStatus} naar ${newStatus}`,
+    metadata: { from: currentStatus, to: newStatus },
+  });
+
+  revalidatePath(`/reservations/${reservationId}`);
+  revalidatePath("/reservations");
+  revalidatePath("/calendar");
+  return { success: true };
+}
+
+// --- Cancel with reason ---
+
+export async function cancelReservationAction(
+  reservationId: string,
+  reason?: string
+): Promise<ActionState> {
+  const [existing] = await db
+    .select({
+      id: reservations.id,
+      status: reservations.status,
+      reservationNumber: reservations.reservationNumber,
+      firstName: reservations.firstName,
+      email: reservations.email,
+      arrivalDate: reservations.arrivalDate,
+      departureDate: reservations.departureDate,
+    })
+    .from(reservations)
+    .where(eq(reservations.id, reservationId))
+    .limit(1);
+
+  if (!existing) {
+    return { message: "Reservering niet gevonden" };
+  }
+
+  const currentStatus = existing.status as ReservationStatus;
+  const allowed = ALLOWED_TRANSITIONS[currentStatus];
+
+  if (!allowed.includes("CANCELLED")) {
+    return {
+      message: `Reservering met status "${currentStatus}" kan niet worden geannuleerd`,
+    };
+  }
+
+  await db
+    .update(reservations)
+    .set({
+      status: "CANCELLED",
+      statusChangedAt: new Date(),
+      // Store cancellation reason in internal note (append if existing)
+      ...(reason && {
+        internalNote: existing.status === "CONFIRMED"
+          ? `[Geannuleerd] ${reason}`
+          : reason,
+      }),
+    })
+    .where(eq(reservations.id, reservationId));
+
+  // Send cancellation email to guest
+  const cancelEmail = buildCancellationEmail({
+    firstName: existing.firstName,
+    reservationNumber: existing.reservationNumber,
+    arrivalDate: existing.arrivalDate,
+    departureDate: existing.departureDate,
+  });
+  await sendMail({ to: existing.email, ...cancelEmail }).catch((err) =>
+    console.error("[reservation] Failed to send cancellation email:", err)
+  );
+
+  await logAudit({
+    action: "reservation.cancelled",
+    entityType: "reservation",
+    entityId: reservationId,
+    description: `Reservering geannuleerd${reason ? `: ${reason}` : ""}`,
+    metadata: { previousStatus: currentStatus, reason: reason || null },
+  });
+
+  revalidatePath(`/reservations/${reservationId}`);
+  revalidatePath("/reservations");
+  revalidatePath("/calendar");
   return { success: true };
 }

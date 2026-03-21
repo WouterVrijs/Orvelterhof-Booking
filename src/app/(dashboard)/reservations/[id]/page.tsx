@@ -5,6 +5,8 @@ import { db } from "@/lib/db";
 import { reservations } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { ReservationDetail } from "@/components/reservations/reservation-detail";
+import { AuditHistory } from "@/components/reservations/audit-history";
+import { getAuditLogsForEntity } from "@/lib/services/audit";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -23,6 +25,8 @@ export default async function ReservationDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  const auditLogs = await getAuditLogsForEntity("reservation", id);
+
   return (
     <div className="space-y-6">
       <Link
@@ -34,6 +38,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
       </Link>
 
       <ReservationDetail reservation={reservation} />
+      <AuditHistory logs={auditLogs} />
     </div>
   );
 }

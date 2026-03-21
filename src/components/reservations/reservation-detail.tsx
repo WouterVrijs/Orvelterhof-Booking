@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { EditReservationForm } from "@/components/reservations/edit-reservation-form";
+import { StatusActions } from "@/components/reservations/status-actions";
 import { formatDate } from "@/lib/utils/dates";
 import { formatFullName, formatCurrency, formatGuestCount } from "@/lib/utils/format";
 import { RESERVATION_SOURCE_LABELS } from "@/lib/types";
@@ -26,7 +27,9 @@ interface ReservationData {
   guestNote: string | null;
   internalNote: string | null;
   source: string;
+  statusChangedAt: Date | null;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 interface ReservationDetailProps {
@@ -114,6 +117,12 @@ export function ReservationDetail({ reservation }: ReservationDetailProps) {
         </Card>
       </div>
 
+      {/* Status wijzigen */}
+      <StatusActions
+        reservationId={reservation.id}
+        currentStatus={reservation.status as ReservationStatus}
+      />
+
       {/* Notities */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
@@ -137,6 +146,23 @@ export function ReservationDetail({ reservation }: ReservationDetailProps) {
           </CardContent>
         </Card>
       </div>
+
+      {/* Tijdstempels */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Tijdlijn</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <Detail label="Aangemaakt" value={formatDate(reservation.createdAt)} />
+          <Detail label="Laatst bijgewerkt" value={formatDate(reservation.updatedAt)} />
+          {reservation.statusChangedAt && (
+            <Detail
+              label="Status gewijzigd"
+              value={formatDate(reservation.statusChangedAt)}
+            />
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

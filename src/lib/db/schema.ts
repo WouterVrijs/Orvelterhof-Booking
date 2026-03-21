@@ -112,8 +112,85 @@ export const blockedPeriods = pgTable("blocked_periods", {
     .$onUpdate(() => new Date()),
 });
 
+// --- Pricing Settings ---
+
+export const pricingStrategyEnum = pgEnum("pricing_strategy", [
+  "PER_NIGHT",
+  "FIXED_PER_STAY",
+]);
+
+export const pricingSettings = pgTable("pricing_settings", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  strategy: pricingStrategyEnum("strategy").notNull().default("PER_NIGHT"),
+  basePrice: numeric("base_price", { precision: 10, scale: 2 })
+    .notNull()
+    .default("0"),
+  cleaningFee: numeric("cleaning_fee", { precision: 10, scale: 2 })
+    .notNull()
+    .default("0"),
+  depositAmount: numeric("deposit_amount", { precision: 10, scale: 2 })
+    .notNull()
+    .default("0"),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
+// --- Accommodation Settings ---
+
+export const accommodationSettings = pgTable("accommodation_settings", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  accommodationName: varchar("accommodation_name", { length: 255 })
+    .notNull()
+    .default("Orvelterhof"),
+  contactEmail: varchar("contact_email", { length: 255 })
+    .notNull()
+    .default(""),
+  contactPhone: varchar("contact_phone", { length: 50 }),
+  checkInTime: varchar("check_in_time", { length: 5 })
+    .notNull()
+    .default("15:00"),
+  checkOutTime: varchar("check_out_time", { length: 5 })
+    .notNull()
+    .default("10:00"),
+  maxGuests: integer("max_guests").notNull().default(36),
+  minStayNights: integer("min_stay_nights").notNull().default(1),
+  defaultCleaningFee: numeric("default_cleaning_fee", {
+    precision: 10,
+    scale: 2,
+  })
+    .notNull()
+    .default("0"),
+  defaultDeposit: numeric("default_deposit", { precision: 10, scale: 2 })
+    .notNull()
+    .default("0"),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
+// --- Audit Logs ---
+
+export const auditLogs = pgTable("audit_logs", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  action: varchar("action", { length: 100 }).notNull(),
+  entityType: varchar("entity_type", { length: 50 }).notNull(),
+  entityId: uuid("entity_id"),
+  description: text("description").notNull(),
+  metadata: text("metadata"), // JSON string for extra context
+  userId: uuid("user_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
 // --- Type exports ---
 
+export type AuditLog = typeof auditLogs.$inferSelect;
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
@@ -121,3 +198,5 @@ export type Reservation = typeof reservations.$inferSelect;
 export type NewReservation = typeof reservations.$inferInsert;
 export type BlockedPeriod = typeof blockedPeriods.$inferSelect;
 export type NewBlockedPeriod = typeof blockedPeriods.$inferInsert;
+export type PricingSettings = typeof pricingSettings.$inferSelect;
+export type AccommodationSettings = typeof accommodationSettings.$inferSelect;

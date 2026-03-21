@@ -1,18 +1,23 @@
 import { PageHeader } from "@/components/shared/page-header";
-import { EmptyState } from "@/components/shared/empty-state";
-import { Euro } from "lucide-react";
+import { PricingForm } from "@/components/pricing/pricing-form";
+import { getPricingSettings } from "@/lib/actions/pricing-actions";
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const settings = await getPricingSettings();
+
   return (
-    <div className="space-y-6">
+    <div className="max-w-2xl space-y-6">
       <PageHeader
         title="Prijzen"
-        description="Beheer prijsinstellingen"
+        description="Beheer basisprijs, schoonmaakkosten en borgsom"
       />
-      <EmptyState
-        icon={<Euro className="h-10 w-10 text-neutral-400" />}
-        title="Prijzen"
-        description="De prijzenmodule wordt gebouwd in de pricing-epic."
+      <PricingForm
+        settings={{
+          strategy: settings.strategy,
+          basePrice: settings.basePrice,
+          cleaningFee: settings.cleaningFee,
+          depositAmount: settings.depositAmount,
+        }}
       />
     </div>
   );

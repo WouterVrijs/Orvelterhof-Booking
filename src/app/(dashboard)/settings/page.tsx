@@ -1,18 +1,28 @@
 import { PageHeader } from "@/components/shared/page-header";
-import { EmptyState } from "@/components/shared/empty-state";
-import { Settings } from "lucide-react";
+import { SettingsForm } from "@/components/settings/settings-form";
+import { getAccommodationSettings } from "@/lib/actions/settings-actions";
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const settings = await getAccommodationSettings();
+
   return (
-    <div className="space-y-6">
+    <div className="max-w-2xl space-y-6">
       <PageHeader
         title="Instellingen"
-        description="Beheer accommodatie-instellingen"
+        description="Beheer accommodatiegegevens, boekingsregels en standaard kosten"
       />
-      <EmptyState
-        icon={<Settings className="h-10 w-10 text-neutral-400" />}
-        title="Instellingen"
-        description="De instellingenmodule wordt gebouwd in de settings-epic."
+      <SettingsForm
+        settings={{
+          accommodationName: settings.accommodationName,
+          contactEmail: settings.contactEmail,
+          contactPhone: settings.contactPhone,
+          checkInTime: settings.checkInTime,
+          checkOutTime: settings.checkOutTime,
+          maxGuests: settings.maxGuests,
+          minStayNights: settings.minStayNights,
+          defaultCleaningFee: settings.defaultCleaningFee,
+          defaultDeposit: settings.defaultDeposit,
+        }}
       />
     </div>
   );

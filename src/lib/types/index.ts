@@ -20,6 +20,14 @@ export const RESERVATION_SOURCE_LABELS: Record<ReservationSource, string> = {
   EMAIL: "E-mail",
 };
 
+// Allowed status transitions: current status → allowed next statuses
+export const ALLOWED_TRANSITIONS: Record<ReservationStatus, ReservationStatus[]> = {
+  NEW: ["IN_PROGRESS", "CONFIRMED", "CANCELLED"],
+  IN_PROGRESS: ["CONFIRMED", "CANCELLED"],
+  CONFIRMED: ["CANCELLED"],
+  CANCELLED: [],
+};
+
 export const BLOCK_TYPE_LABELS: Record<BlockType, string> = {
   MANUAL: "Handmatig",
   MAINTENANCE: "Onderhoud",
