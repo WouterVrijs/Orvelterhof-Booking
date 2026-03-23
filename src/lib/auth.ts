@@ -8,10 +8,13 @@ import { eq } from "drizzle-orm";
 const SESSION_COOKIE = "session";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
+export type UserRole = "ADMIN" | "USER";
+
 export type SessionUser = {
   id: string;
   email: string;
   name: string;
+  role: UserRole;
 };
 
 type SessionPayload = SessionUser & {
@@ -60,7 +63,12 @@ export async function verifyCredentials(
   const isValid = await bcrypt.compare(password, user.passwordHash);
   if (!isValid) return null;
 
-  return { id: user.id, email: user.email, name: user.name };
+  return {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    role: (user.role as UserRole) ?? "USER",
+  };
 }
 
 // Create session cookie after successful login
@@ -86,7 +94,20 @@ export async function getSession(): Promise<SessionUser | null> {
   const payload = await verifyToken(token);
   if (!payload) return null;
 
-  return { id: payload.id, email: payload.email, name: payload.name };
+  return {
+    id: payload.id,
+    email: payload.email,
+    name: payload.name,
+    role: payload.role ?? "USER",
+  };
+}
+
+// Check if current user has admin role
+export async function requireAdmin(): Promise<SessionUser> {
+  const session = await getSession();
+  if (!session) throw new Error("Not authenticated");
+  if (session.role !== "ADMIN") throw new Error("Not authorized");
+  return session;
 }
 
 // Delete session cookie

@@ -21,6 +21,7 @@ async function seed() {
       name: "Beheerder",
       email: "admin@orvelterhof.nl",
       passwordHash,
+      role: "ADMIN",
       isActive: true,
     })
     .onConflictDoNothing({ target: schema.users.email });

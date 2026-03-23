@@ -27,6 +27,8 @@ export const reservationSourceEnum = pgEnum("reservation_source", [
   "EMAIL",
 ]);
 
+export const userRoleEnum = pgEnum("user_role", ["ADMIN", "USER"]);
+
 // --- Users ---
 
 export const users = pgTable("users", {
@@ -34,6 +36,7 @@ export const users = pgTable("users", {
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull().unique(),
   passwordHash: varchar("password_hash", { length: 255 }).notNull(),
+  role: userRoleEnum("role").notNull().default("USER"),
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()

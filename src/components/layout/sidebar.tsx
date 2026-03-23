@@ -8,10 +8,11 @@ import {
   Calendar,
   Euro,
   Settings,
-  LogOut,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LogoutButton } from "@/components/auth/logout-button";
+import type { UserRole } from "@/lib/auth";
 
 const navItems = [
   { title: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -21,8 +22,16 @@ const navItems = [
   { title: "Instellingen", href: "/settings", icon: Settings },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  userRole: UserRole;
+}
+
+export function Sidebar({ userRole }: SidebarProps) {
   const pathname = usePathname();
+
+  const items = userRole === "ADMIN"
+    ? [...navItems, { title: "Gebruikers", href: "/settings/users", icon: Users }]
+    : navItems;
 
   return (
     <aside className="flex h-screen w-64 flex-col border-r border-neutral-200 bg-white">
@@ -40,7 +49,7 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 space-y-1 px-3 py-4">
-        {navItems.map((item) => {
+        {items.map((item) => {
           const isActive =
             item.href === "/"
               ? pathname === "/"
