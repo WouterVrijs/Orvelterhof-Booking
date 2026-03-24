@@ -3,7 +3,13 @@ import { ArrowLeft } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { CreateReservationForm } from "@/components/reservations/create-reservation-form";
 
-export default function NewReservationPage() {
+interface PageProps {
+  searchParams: Promise<{ arrivalDate?: string }>;
+}
+
+export default async function NewReservationPage({ searchParams }: PageProps) {
+  const params = await searchParams;
+
   return (
     <div className="space-y-6">
       <div>
@@ -20,7 +26,7 @@ export default function NewReservationPage() {
         />
       </div>
 
-      <CreateReservationForm />
+      <CreateReservationForm defaultArrivalDate={params.arrivalDate} />
     </div>
   );
 }

@@ -1,6 +1,9 @@
+import Link from "next/link";
+import { Plus } from "lucide-react";
 import { db } from "@/lib/db";
 import { reservations, blockedPeriods } from "@/lib/db/schema";
 import { inArray } from "drizzle-orm";
+import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/page-header";
 import { CalendarView } from "@/components/calendar/calendar-view";
 import { BlockedPeriodsList } from "@/components/calendar/blocked-periods-list";
@@ -56,7 +59,14 @@ export default async function CalendarPage() {
       <PageHeader
         title="Kalender"
         description="Bekijk beschikbaarheid, reserveringen en geblokkeerde periodes"
-      />
+      >
+        <Link href="/reservations/new">
+          <Button>
+            <Plus className="h-4 w-4" />
+            Nieuwe reservering
+          </Button>
+        </Link>
+      </PageHeader>
       <CalendarView
         reservations={mappedReservations}
         blockedPeriods={mappedBlocks}

@@ -43,23 +43,21 @@
   - Duidelijke foutmelding bij verlopen/ongeldige/gebruikte token
   - Link naar opnieuw aanvragen, geen technische foutpagina
 
-### Epic 3b – Accountbeheer
+### Epic 3b – Accountbeheer ✅
 
-- [ ] **US 3b.1** Nieuwe gebruiker aanmaken
-  - Beheerder kan via de instellingen een nieuwe gebruiker aanmaken
-  - Formulier met naam, e-mailadres en initieel wachtwoord
-  - E-mailadres moet uniek zijn, wachtwoord moet voldoen aan minimale eisen (8+ karakters)
-  - Wachtwoord wordt veilig gehasht opgeslagen
-- [ ] **US 3b.2** Gebruikersoverzicht bekijken
-  - Lijst van alle gebruikers met naam, e-mailadres, status (actief/inactief) en aanmaakdatum
-  - Duidelijk zichtbaar welke gebruikers actief zijn
-- [ ] **US 3b.3** Gebruiker deactiveren en activeren
-  - Beheerder kan een gebruiker deactiveren (niet verwijderen)
-  - Gedeactiveerde gebruiker kan niet meer inloggen
-  - Beheerder kan een gedeactiveerde gebruiker opnieuw activeren
-- [ ] **US 3b.4** Wachtwoord van gebruiker resetten
-  - Beheerder kan het wachtwoord van een andere gebruiker resetten
-  - Nieuw wachtwoord moet voldoen aan minimale eisen
+> Geïmplementeerd via Module 11 (Epic 18 + 19). Zie /settings/users.
+
+- [x] **US 3b.1** Nieuwe gebruiker aanmaken
+  - Beheerder kan via /settings/users een nieuwe gebruiker aanmaken
+  - Formulier met naam, e-mailadres, wachtwoord (min. 8 tekens) en rol (admin/gebruiker)
+  - E-mailadres moet uniek zijn, wachtwoord wordt veilig gehasht
+- [x] **US 3b.2** Gebruikersoverzicht bekijken
+  - Lijst van alle gebruikers met naam, e-mailadres, rol, status (actief/inactief)
+- [x] **US 3b.3** Gebruiker deactiveren en activeren
+  - Deactiveren (soft delete), gedeactiveerde gebruiker kan niet inloggen
+  - Opnieuw activeren mogelijk, eigen account niet deactiveerbaar
+- [x] **US 3b.4** Wachtwoord van gebruiker resetten
+  - Beheerder kan nieuw wachtwoord instellen (min. 8 tekens)
   - Gebruiker kan daarna inloggen met het nieuwe wachtwoord
 
 ---
@@ -77,6 +75,81 @@
 - [x] **US 4.3** Snelle acties gebruiken
   - Knoppen naar reserveringen, kalender, prijzen en instellingen
   - Direct navigeerbaar vanuit het dashboard
+
+### Epic 4b – Actie vereist blok
+
+- [ ] **US 4b.1** "Actie vereist" sectie bovenaan het dashboard
+  - Prominent blok dat direct toont wat aandacht nodig heeft
+  - Bevat: aanvragen die beoordeeld moeten worden, reserveringen met openstaande betaling, aankomsten/vertrekken vandaag, boekingen met ontbrekende gegevens
+  - Elk item klikbaar naar de relevante reservering of overzichtspagina
+- [ ] **US 4b.2** Reserveringen die actie vereisen
+  - Aantal en lijst van reserveringen met status "nieuw" of "in behandeling"
+  - Direct klikbaar om actie te ondernemen (bevestigen, afwijzen)
+- [ ] **US 4b.3** Notificaties en reminders
+  - Meldingen voor: aankomst morgen, openstaande betaling, seizoensprijs niet ingesteld, nieuwe aanvraag ontvangen
+  - Compact blok op het dashboard dat meldingen toont op basis van actuele data
+
+### Epic 4c – Operationeel dagoverzicht
+
+- [ ] **US 4c.1** Vandaag inchecken en uitchecken
+  - Lijst van gasten die vandaag aankomen (inchecken)
+  - Lijst van gasten die vandaag vertrekken (uitchecken)
+  - Klikbaar naar reserveringsdetail
+- [ ] **US 4c.2** Vandaag / deze week overzicht
+  - Compact blok: "Vandaag: X aankomsten, Y vertrekken" en "Deze week: X aankomsten, Y vertrekken"
+  - Totaal aantal gasten komende 7 dagen
+- [ ] **US 4c.3** Huidige bezetting
+  - Indicator of de accommodatie op dit moment bezet is
+  - Naam van huidige gast en vertrekdatum als bezet
+  - "Beschikbaar" melding als er niemand is
+- [ ] **US 4c.4** Recente aanvragen tabel
+  - Compacte lijst van de laatste 5-10 aanvragen met: naam, periode, gasten, status, datum, bron
+  - Knop: bekijken / bevestigen — direct actie vanuit dashboard zonder naar reserveringen te navigeren
+
+### Epic 4d – Financieel snapshot
+
+- [ ] **US 4d.1** Financieel overzicht op dashboard
+  - Omzet deze maand en verwachte omzet komende maand
+  - Openstaand bedrag (totaal onbetaalde + aanbetaalde reserveringen)
+  - Aantal betaalde reserveringen
+  - Gemiddelde boekingswaarde
+- [ ] **US 4d.2** Openstaande betalingen en borgsommen
+  - Totaalbedrag en aantal reserveringen met openstaande betalingen
+  - Aantal borgsommen die ontvangen zijn maar nog niet terugbetaald
+  - Onverstuurde facturen (concept-status)
+  - Elk item klikbaar naar gefilterd overzicht
+
+### Epic 4e – Kalenderpreview en bezettingsgraad
+
+- [ ] **US 4e.1** Mini kalenderwidget op dashboard
+  - Kleine maandweergave met bezette dagen visueel gemarkeerd
+  - Of een compacte lijst "komende 14 dagen" met bezettingsindicatie per dag
+  - Klikbaar naar volledige kalender
+- [ ] **US 4e.2** Bezettingsgraad widget
+  - Bezettingsgraad deze maand en komende maand (percentage)
+  - Vergelijking met vorige maand (stijging/daling)
+  - Gemiddelde prijs per nacht
+  - Gemiddelde verblijfsduur
+
+### Epic 4f – Statusverdeling en bronanalyse
+
+- [ ] **US 4f.1** Statusverdeling van reserveringen
+  - Visueel overzicht van alle reserveringen per status: nieuw, in behandeling, bevestigd, geannuleerd, betaalverzoek verzonden, deels betaald, volledig betaald
+  - Als KPI-cards of compact diagram
+- [ ] **US 4f.2** Bron van aanvragen
+  - Verdeling van boekingen per bron: website, telefoon, e-mail, handmatig
+  - Visueel als kleine grafiek of lijst met aantallen
+  - Waardevol voor marketinginzicht
+
+### Epic 4g – Slimmere snelle acties en zoeken
+
+- [ ] **US 4g.1** Taakgerichte snelle acties
+  - Acties gericht op dagelijkse taken: nieuwe reservering toevoegen, aanvraag beoordelen, beschikbaarheid blokkeren, prijs aanpassen, gebruiker toevoegen
+  - Minder navigatie, meer directe acties
+- [ ] **US 4g.2** Globale zoekfunctie
+  - Zoekbalk bovenin het dashboard (of in de header)
+  - Zoeken op: gastnaam, reserveringsnummer, e-mailadres, periode
+  - Resultaten direct zichtbaar met link naar reserveringsdetail
 
 ---
 
@@ -372,11 +445,63 @@
 
 ---
 
+## Module 13 — Kortingscodes
+
+### Epic 24 – Kortingscodes beheren
+
+- [ ] **US 24.1** Kortingscode aanmaken
+  - Formulier met: code (uniek), kortingstype (percentage of vast bedrag), waarde, beschrijving
+  - Optioneel: geldigheidsperiode (startdatum, einddatum)
+  - Optioneel: maximaal aantal keer te gebruiken
+  - Code wordt automatisch naar hoofdletters geconverteerd
+- [ ] **US 24.2** Kortingscodes overzicht
+  - Lijst van alle kortingscodes met: code, type, waarde, geldig van/tot, aantal keer gebruikt, status
+  - Filteren op actief/verlopen/inactief
+- [ ] **US 24.3** Kortingscode bewerken en deactiveren
+  - Beschrijving, geldigheidsperiode en maximaal gebruik aanpassen
+  - Code en type niet meer wijzigbaar na aanmaken
+  - Deactiveren zodat de code niet meer gebruikt kan worden
+- [ ] **US 24.4** Automatisch verlopen van codes
+  - Codes met een einddatum zijn na die datum niet meer geldig
+  - Codes die het maximaal aantal keer zijn gebruikt zijn niet meer geldig
+  - Verlopen codes worden visueel gemarkeerd in het overzicht
+
+### Epic 25 – Kortingscode toepassen op reservering
+
+- [ ] **US 25.1** Kortingscode valideren via API
+  - API endpoint voor de marketing website om een code te valideren
+  - Retourneert: geldig/ongeldig, kortingstype, waarde, beschrijving
+  - Controles: code bestaat, is actief, binnen geldigheidsperiode, niet over max gebruik
+  - Geeft geen gevoelige informatie prijs bij ongeldige code
+- [ ] **US 25.2** Kortingscode toepassen bij boekingsaanvraag
+  - Marketing website stuurt kortingscode mee bij POST /api/bookings
+  - Server-side validatie en berekening van kortingsbedrag
+  - Korting wordt opgeslagen als reservering line item (negatief bedrag)
+  - Gebruik wordt geregistreerd
+- [ ] **US 25.3** Kortingscode handmatig toepassen door beheerder
+  - Beheerder kan vanuit reserveringsdetail een kortingscode invoeren en toepassen
+  - Validatie en berekening zoals bij website
+  - Korting zichtbaar in prijsspecificatie
+- [ ] **US 25.4** Korting zichtbaar op reservering
+  - Toegepaste korting zichtbaar op reserveringsdetail (code, type, bedrag)
+  - Korting als apart line item in de prijsspecificatie
+  - Totaalprijs wordt herberekend na toepassing
+
+### Epic 26 – Kortingscode gebruik en rapportage
+
+- [ ] **US 26.1** Gebruik per code bijhouden
+  - Teller van het aantal keer dat een code is gebruikt
+  - Overzicht van welke reserveringen een code hebben gebruikt
+- [ ] **US 26.2** Kortingsrapportage
+  - Per code: totaal kortingsbedrag, aantal keer gebruikt, lijst van reserveringen
+  - Overzicht van alle toegepaste kortingen over een periode
+
+---
+
 ## Post-MVP functionaliteiten
 
 > Onderstaande functionaliteiten zijn bewust buiten scope voor de MVP. De architectuur houdt er waar mogelijk rekening mee.
 
-- Kortingscodes
 - Channel manager (Airbnb, Booking.com)
 - iCal synchronisatie
 - Multi-property ondersteuning
@@ -394,7 +519,7 @@
 | Module | Epics | Afgerond | Status |
 |--------|-------|----------|--------|
 | 1. Authenticatie | 3 | 3 | ✅ Compleet |
-| 2. Dashboard | 1 | 1 | ✅ Compleet |
+| 2. Dashboard | 7 | 1 | 🔶 Deels klaar |
 | 3. Reserveringenbeheer | 3 | 3 | ✅ Compleet |
 | 4. Kalender | 2 | 2 | ✅ Compleet |
 | 5. Website-aanvragen | 1 | 1 | ✅ Compleet |
@@ -405,7 +530,8 @@
 | 10. Audit | 1 | 1 | ✅ Compleet |
 | 11. Gebruikersbeheer | 2 | 2 | ✅ Compleet |
 | 12. Betalingen & facturatie | 4 | 4 | ✅ Compleet |
-| **Totaal** | **23** | **23** | **100%** |
+| 13. Kortingscodes | 3 | 0 | ⬜ Te bouwen |
+| **Totaal** | **32** | **23** | **72%** |
 
 
 

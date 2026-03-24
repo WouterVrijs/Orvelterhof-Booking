@@ -33,13 +33,17 @@ function formatEuro(amount: number): string {
   }).format(amount);
 }
 
-export function CreateReservationForm() {
+interface CreateReservationFormProps {
+  defaultArrivalDate?: string;
+}
+
+export function CreateReservationForm({ defaultArrivalDate }: CreateReservationFormProps) {
   const [state, formAction, isPending] = useActionState<ActionState, FormData>(
     createReservationAction,
     null
   );
 
-  const [arrivalDate, setArrivalDate] = useState("");
+  const [arrivalDate, setArrivalDate] = useState(defaultArrivalDate || "");
   const [departureDate, setDepartureDate] = useState("");
   const [pricePreview, setPricePreview] = useState<PriceCalculation | null>(
     null

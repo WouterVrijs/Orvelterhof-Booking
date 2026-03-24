@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   format,
   startOfMonth,
@@ -54,6 +55,7 @@ export function CalendarView({
   reservations,
   blockedPeriods,
 }: CalendarViewProps) {
+  const router = useRouter();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState<{
     date: Date;
@@ -117,7 +119,12 @@ export function CalendarView({
   }
 
   function handleDayClick(day: Date, info: DayInfo) {
-    if (info.type === "available") return;
+    // Available day: navigate to create reservation with date prefilled
+    if (info.type === "available") {
+      const dateStr = format(day, "yyyy-MM-dd");
+      router.push(`/reservations/new?arrivalDate=${dateStr}`);
+      return;
+    }
 
     // Toggle if same day clicked
     if (
@@ -185,7 +192,7 @@ export function CalendarView({
 
         {days.map((day) => {
           const info = getDayInfo(day);
-          const isClickable = info.type !== "available";
+          const isClickable = true; // All days are clickable
           const isSelected =
             selectedDay?.date.toDateString() === day.toDateString();
 
