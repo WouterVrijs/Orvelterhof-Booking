@@ -6,8 +6,10 @@ import { reservations, reservationLineItems } from "@/lib/db/schema";
 import { eq, asc } from "drizzle-orm";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ReservationDetail } from "@/components/reservations/reservation-detail";
+import { PaymentCard } from "@/components/reservations/payment-card";
 import { AuditHistory } from "@/components/reservations/audit-history";
 import { getAuditLogsForEntity } from "@/lib/services/audit";
+import { getPaymentsForReservation } from "@/lib/actions/payment-actions";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -26,13 +28,14 @@ export default async function ReservationDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  const [auditLogs, lineItems] = await Promise.all([
+  const [auditLogs, lineItems, paymentsList] = await Promise.all([
     getAuditLogsForEntity("reservation", id),
     db
       .select()
       .from(reservationLineItems)
       .where(eq(reservationLineItems.reservationId, id))
       .orderBy(asc(reservationLineItems.createdAt)),
+    getPaymentsForReservation(id),
   ]);
 
   return (
@@ -95,6 +98,15 @@ export default async function ReservationDetailPage({ params }: PageProps) {
           </CardContent>
         </Card>
       )}
+
+      {/* Betalingen */}
+      <PaymentCard
+        reservationId={reservation.id}
+        totalPrice={reservation.totalPrice}
+        amountPaid={reservation.amountPaid}
+        paymentStatus={reservation.paymentStatus}
+        payments={paymentsList}
+      />
 
       <AuditHistory logs={auditLogs} />
     </div>

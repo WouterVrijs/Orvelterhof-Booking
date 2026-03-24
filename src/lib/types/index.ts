@@ -34,3 +34,26 @@ export const BLOCK_TYPE_LABELS: Record<BlockType, string> = {
   OWNER: "Eigen gebruik",
   OTHER: "Overig",
 };
+
+// Payment types
+export type PaymentStatus = "UNPAID" | "PARTIAL" | "PAID" | "REFUNDED";
+export type PaymentMethod = "BANK_TRANSFER" | "CASH" | "IDEAL" | "CREDITCARD" | "MOLLIE" | "OTHER";
+
+export const PAYMENT_STATUS_CONFIG: Record<
+  PaymentStatus,
+  { label: string; variant: "info" | "warning" | "success" | "danger" }
+> = {
+  UNPAID: { label: "Onbetaald", variant: "danger" },
+  PARTIAL: { label: "Aanbetaald", variant: "warning" },
+  PAID: { label: "Betaald", variant: "success" },
+  REFUNDED: { label: "Terugbetaald", variant: "info" },
+};
+
+export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
+  BANK_TRANSFER: "Bankoverschrijving",
+  CASH: "Contant",
+  IDEAL: "iDEAL",
+  CREDITCARD: "Creditcard",
+  MOLLIE: "Mollie",
+  OTHER: "Overig",
+};

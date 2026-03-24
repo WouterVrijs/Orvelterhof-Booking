@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { PaymentStatusBadge } from "@/components/shared/payment-status-badge";
 import { formatDate } from "@/lib/utils/dates";
 import { formatFullName, formatCurrency } from "@/lib/utils/format";
 import type { ReservationListItem } from "@/lib/services/reservations";
-import type { ReservationStatus } from "@/lib/types";
+import type { ReservationStatus, PaymentStatus } from "@/lib/types";
 
 interface ReservationTableProps {
   reservations: ReservationListItem[];
@@ -32,6 +33,7 @@ export function ReservationTable({ reservations }: ReservationTableProps) {
             <th className="px-4 py-3 text-center">Gasten</th>
             <th className="px-4 py-3 text-right">Prijs</th>
             <th className="px-4 py-3">Status</th>
+            <th className="px-4 py-3">Betaling</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-neutral-100">
@@ -73,6 +75,9 @@ export function ReservationTable({ reservations }: ReservationTableProps) {
               </td>
               <td className="px-4 py-3">
                 <StatusBadge status={r.status as ReservationStatus} />
+              </td>
+              <td className="px-4 py-3">
+                <PaymentStatusBadge status={r.paymentStatus as PaymentStatus} />
               </td>
             </tr>
           ))}

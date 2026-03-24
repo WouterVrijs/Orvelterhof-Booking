@@ -301,11 +301,78 @@
 
 ---
 
+## Module 12 — Betalingen en facturatie
+
+### Epic 20 – Betalingsstatus en registratie ✅
+
+- [x] **US 20.1** Betalingsstatus per reservering
+  - Status bijhouden: onbetaald, aanbetaald, volledig betaald, terugbetaald
+  - Betalingsstatus zichtbaar op reserveringsdetail en in overzichtslijst
+- [x] **US 20.2** Handmatige betaling registreren
+  - Beheerder kan een ontvangen betaling registreren (bedrag, datum, methode, opmerking)
+  - Meerdere deelbetalingen per reservering mogelijk
+  - Betalingsstatus wordt automatisch bijgewerkt op basis van totaal ontvangen vs totaalprijs
+- [x] **US 20.3** Betalingsoverzicht
+  - Overzicht van alle betalingen per reservering
+  - Betalingsstatus kolom in reserveringslijst
+
+### Epic 21 – Online betalen via Mollie
+
+- [ ] **US 21.1** Mollie integratie opzetten
+  - Mollie API koppelen via API key
+  - Betaalmethoden configureren: iDEAL, creditcard, Bancontact
+  - Webhook endpoint voor betalingsstatussen
+- [ ] **US 21.2** Betaallink genereren per reservering
+  - Beheerder kan een betaallink aanmaken voor een reservering (aanbetaling of volledig bedrag)
+  - Link kan gedeeld worden met de gast via e-mail
+  - Betaallink bevat het juiste bedrag en verwijst naar Mollie checkout
+- [ ] **US 21.3** Betaallink versturen naar gast
+  - Automatische e-mail naar gast met betaallink na bevestiging van reservering
+  - Optie om betaallink handmatig opnieuw te versturen
+  - E-mail bevat: bedrag, reserveringsdetails, link naar betaalpagina
+- [ ] **US 21.4** Betalingsstatus automatisch bijwerken via webhook
+  - Mollie webhook ontvangt betalingsupdates (betaald, mislukt, verlopen, terugbetaald)
+  - Betalingsstatus in de app wordt automatisch bijgewerkt
+  - Audit log bij elke statuswijziging
+- [ ] **US 21.5** Terugbetaling via Mollie
+  - Beheerder kan een (deel)terugbetaling initiëren vanuit de app
+  - Terugbetaling wordt via Mollie API verwerkt
+  - Betalingsstatus wordt bijgewerkt naar terugbetaald
+
+### Epic 22 – Facturen genereren
+
+- [ ] **US 22.1** Factuur genereren per reservering
+  - Factuur aanmaken met: accommodatiegegevens, gastgegevens, datums, prijsspecificatie, totaal
+  - BTW-berekening (21%) apart zichtbaar
+  - Factuurnummer automatisch toewijzen (oplopend per jaar)
+- [ ] **US 22.2** Factuur als PDF downloaden
+  - Factuur exporteren als PDF met professionele opmaak
+  - PDF bevat: logo, adresgegevens, factuurregels, BTW, totaal, betalingsinstructies
+- [ ] **US 22.3** Factuur per e-mail versturen
+  - Factuur als PDF-bijlage versturen naar de gast
+  - E-mail met begeleidende tekst en betalingsinformatie
+- [ ] **US 22.4** Factuuroverzicht
+  - Overzicht van alle facturen met: factuurnummer, gast, bedrag, datum, status
+  - Filteren op periode en status (concept, verstuurd, betaald)
+
+### Epic 23 – Borgsom administratie
+
+- [ ] **US 23.1** Borgsom ontvangst registreren
+  - Borgsom markeren als ontvangen (bedrag, datum, methode)
+  - Borgsom zichtbaar op reserveringsdetail
+- [ ] **US 23.2** Borgsom terugbetaling registreren
+  - Na vertrek: borgsom markeren als terugbetaald (volledig of gedeeltelijk)
+  - Optioneel: reden voor inhouding (schade, extra kosten)
+- [ ] **US 23.3** Openstaande borgsommen overzicht
+  - Overzicht van alle openstaande borgsommen (ontvangen maar nog niet terugbetaald)
+  - Filteren op status: verwacht, ontvangen, terugbetaald, (deels) ingehouden
+
+---
+
 ## Post-MVP functionaliteiten
 
 > Onderstaande functionaliteiten zijn bewust buiten scope voor de MVP. De architectuur houdt er waar mogelijk rekening mee.
 
-- Betalingen en facturatie
 - Kortingscodes
 - Channel manager (Airbnb, Booking.com)
 - iCal synchronisatie
@@ -334,7 +401,8 @@
 | 9. Instellingen | 1 | 1 | ✅ Compleet |
 | 10. Audit | 1 | 1 | ✅ Compleet |
 | 11. Gebruikersbeheer | 2 | 2 | ✅ Compleet |
-| **Totaal** | **19** | **19** | **100%** |
+| 12. Betalingen & facturatie | 4 | 1 | 🔶 Deels klaar |
+| **Totaal** | **23** | **20** | **87%** |
 
 
 

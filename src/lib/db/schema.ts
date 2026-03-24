@@ -27,6 +27,22 @@ export const reservationSourceEnum = pgEnum("reservation_source", [
   "EMAIL",
 ]);
 
+export const paymentStatusEnum = pgEnum("payment_status", [
+  "UNPAID",
+  "PARTIAL",
+  "PAID",
+  "REFUNDED",
+]);
+
+export const paymentMethodEnum = pgEnum("payment_method", [
+  "BANK_TRANSFER",
+  "CASH",
+  "IDEAL",
+  "CREDITCARD",
+  "MOLLIE",
+  "OTHER",
+]);
+
 export const userRoleEnum = pgEnum("user_role", ["ADMIN", "USER"]);
 
 // --- Users ---
@@ -77,7 +93,9 @@ export const reservations = pgTable("reservations", {
   departureDate: date("departure_date").notNull(),
   numberOfGuests: integer("number_of_guests").notNull(),
   status: reservationStatusEnum("status").notNull().default("NEW"),
+  paymentStatus: paymentStatusEnum("payment_status").notNull().default("UNPAID"),
   totalPrice: numeric("total_price", { precision: 10, scale: 2 }),
+  amountPaid: numeric("amount_paid", { precision: 10, scale: 2 }).notNull().default("0"),
   guestNote: text("guest_note"),
   internalNote: text("internal_note"),
   source: reservationSourceEnum("source").notNull().default("MANUAL"),
@@ -89,6 +107,22 @@ export const reservations = pgTable("reservations", {
     .notNull()
     .defaultNow()
     .$onUpdate(() => new Date()),
+});
+
+// --- Payments ---
+
+export const payments = pgTable("payments", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  reservationId: uuid("reservation_id")
+    .notNull()
+    .references(() => reservations.id, { onDelete: "cascade" }),
+  amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
+  method: paymentMethodEnum("method").notNull(),
+  description: varchar("description", { length: 500 }),
+  paidAt: date("paid_at").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 
 // --- Blocked Periods ---
@@ -324,3 +358,5 @@ export type ReservationLineItem = typeof reservationLineItems.$inferSelect;
 export type Season = typeof seasons.$inferSelect;
 export type StayTypePrice = typeof stayTypePrices.$inferSelect;
 export type SpecialArrangement = typeof specialArrangements.$inferSelect;
+export type Payment = typeof payments.$inferSelect;
+export type NewPayment = typeof payments.$inferInsert;

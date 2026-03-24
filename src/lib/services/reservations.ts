@@ -16,6 +16,7 @@ export type ReservationListItem = Pick<
   | "status"
   | "source"
   | "totalPrice"
+  | "paymentStatus"
   | "createdAt"
 >;
 
@@ -78,6 +79,7 @@ export async function getReservations(
       status: reservations.status,
       source: reservations.source,
       totalPrice: reservations.totalPrice,
+      paymentStatus: reservations.paymentStatus,
       createdAt: reservations.createdAt,
     })
     .from(reservations)

@@ -10,7 +10,9 @@ export type AuditAction =
   | "reservation.status_changed"
   | "blocked_period.created"
   | "blocked_period.updated"
-  | "blocked_period.deleted";
+  | "blocked_period.deleted"
+  | "payment.registered"
+  | "payment.deleted";
 
 export type AuditEntityType = "reservation" | "blocked_period";
 
