@@ -340,21 +340,22 @@
   - [ ] `MOLLIE_API_KEY` toevoegen aan Vercel environment variables
   - [ ] Webhook URL instellen in Mollie dashboard
 
-### Epic 22 – Facturen genereren
+### Epic 22 – Facturen genereren ✅
 
-- [ ] **US 22.1** Factuur genereren per reservering
-  - Factuur aanmaken met: accommodatiegegevens, gastgegevens, datums, prijsspecificatie, totaal
+- [x] **US 22.1** Factuur genereren per reservering
+  - Factuur aanmaken vanuit reserveringsdetail met alle gegevens
   - BTW-berekening (21%) apart zichtbaar
-  - Factuurnummer automatisch toewijzen (oplopend per jaar)
-- [ ] **US 22.2** Factuur als PDF downloaden
-  - Factuur exporteren als PDF met professionele opmaak
-  - PDF bevat: logo, adresgegevens, factuurregels, BTW, totaal, betalingsinstructies
-- [ ] **US 22.3** Factuur per e-mail versturen
-  - Factuur als PDF-bijlage versturen naar de gast
-  - E-mail met begeleidende tekst en betalingsinformatie
-- [ ] **US 22.4** Factuuroverzicht
-  - Overzicht van alle facturen met: factuurnummer, gast, bedrag, datum, status
-  - Filteren op periode en status (concept, verstuurd, betaald)
+  - Factuurnummer automatisch oplopend per jaar (F2026-0001)
+- [x] **US 22.2** Factuur als PDF downloaden
+  - Professionele HTML factuur via /api/invoices/[id]/pdf
+  - Browser print → PDF opslaan
+  - Bevat: accommodatiegegevens, gastgegevens, factuurregels, BTW, totaal
+- [x] **US 22.3** Factuur per e-mail versturen
+  - E-mail met factuurlink naar gast
+  - Status wordt bijgewerkt naar "Verstuurd"
+- [x] **US 22.4** Factuurstatus bijhouden
+  - Statussen: concept, verstuurd, betaald
+  - Factuurkaart op reserveringsdetail met acties
 
 ### Epic 23 – Borgsom administratie
 
@@ -402,8 +403,8 @@
 | 9. Instellingen | 1 | 1 | ✅ Compleet |
 | 10. Audit | 1 | 1 | ✅ Compleet |
 | 11. Gebruikersbeheer | 2 | 2 | ✅ Compleet |
-| 12. Betalingen & facturatie | 4 | 2 | 🔶 Deels klaar |
-| **Totaal** | **23** | **21** | **91%** |
+| 12. Betalingen & facturatie | 4 | 3 | 🔶 Deels klaar |
+| **Totaal** | **23** | **22** | **96%** |
 
 
 

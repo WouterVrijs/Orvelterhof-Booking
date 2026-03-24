@@ -326,6 +326,47 @@ export const specialArrangements = pgTable("special_arrangements", {
     .$onUpdate(() => new Date()),
 });
 
+// --- Invoices ---
+
+export const invoiceStatusEnum = pgEnum("invoice_status", [
+  "DRAFT",
+  "SENT",
+  "PAID",
+]);
+
+export const invoices = pgTable("invoices", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  reservationId: uuid("reservation_id")
+    .notNull()
+    .references(() => reservations.id, { onDelete: "cascade" }),
+  invoiceNumber: varchar("invoice_number", { length: 30 }).notNull().unique(),
+  status: invoiceStatusEnum("status").notNull().default("DRAFT"),
+  // Snapshot of data at invoice creation
+  guestName: varchar("guest_name", { length: 500 }).notNull(),
+  guestEmail: varchar("guest_email", { length: 255 }).notNull(),
+  accommodationName: varchar("accommodation_name", { length: 255 }).notNull(),
+  arrivalDate: date("arrival_date").notNull(),
+  departureDate: date("departure_date").notNull(),
+  numberOfGuests: integer("number_of_guests").notNull(),
+  // Financials
+  subtotal: numeric("subtotal", { precision: 10, scale: 2 }).notNull(),
+  vatRate: numeric("vat_rate", { precision: 5, scale: 2 }).notNull().default("21.00"),
+  vatAmount: numeric("vat_amount", { precision: 10, scale: 2 }).notNull(),
+  total: numeric("total", { precision: 10, scale: 2 }).notNull(),
+  // Line items stored as JSON snapshot
+  lineItems: text("line_items").notNull(), // JSON string
+  // Dates
+  invoiceDate: date("invoice_date").notNull(),
+  sentAt: timestamp("sent_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
 // --- Audit Logs ---
 
 export const auditLogs = pgTable("audit_logs", {
@@ -362,3 +403,4 @@ export type StayTypePrice = typeof stayTypePrices.$inferSelect;
 export type SpecialArrangement = typeof specialArrangements.$inferSelect;
 export type Payment = typeof payments.$inferSelect;
 export type NewPayment = typeof payments.$inferInsert;
+export type Invoice = typeof invoices.$inferSelect;

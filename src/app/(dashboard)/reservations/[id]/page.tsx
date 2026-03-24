@@ -8,9 +8,11 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ReservationDetail } from "@/components/reservations/reservation-detail";
 import { PaymentCard } from "@/components/reservations/payment-card";
 import { MollieActions } from "@/components/reservations/mollie-actions";
+import { InvoiceCard } from "@/components/reservations/invoice-card";
 import { AuditHistory } from "@/components/reservations/audit-history";
 import { getAuditLogsForEntity } from "@/lib/services/audit";
 import { getPaymentsForReservation } from "@/lib/actions/payment-actions";
+import { getInvoiceForReservation } from "@/lib/services/invoice";
 import { isMollieConfigured } from "@/lib/services/mollie";
 
 interface PageProps {
@@ -30,7 +32,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  const [auditLogs, lineItems, paymentsList] = await Promise.all([
+  const [auditLogs, lineItems, paymentsList, invoice] = await Promise.all([
     getAuditLogsForEntity("reservation", id),
     db
       .select()
@@ -38,6 +40,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
       .where(eq(reservationLineItems.reservationId, id))
       .orderBy(asc(reservationLineItems.createdAt)),
     getPaymentsForReservation(id),
+    getInvoiceForReservation(id),
   ]);
 
   return (
@@ -118,6 +121,9 @@ export default async function ReservationDetailPage({ params }: PageProps) {
         paymentStatus={reservation.paymentStatus}
         isMollieEnabled={isMollieConfigured()}
       />
+
+      {/* Factuur */}
+      <InvoiceCard reservationId={reservation.id} invoice={invoice} />
 
       <AuditHistory logs={auditLogs} />
     </div>
