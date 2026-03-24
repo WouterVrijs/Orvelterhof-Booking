@@ -13,6 +13,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="nl">
+      <head>
+        <link
+          href="https://api.fontshare.com/v2/css?f[]=general-sans@200,300,400,500,600,700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className="bg-neutral-50 text-neutral-900 antialiased">
         {children}
       </body>

@@ -203,6 +203,16 @@
 - [x] **US 13.4** Annuleringsmail bij annulering
   - E-mail naar gast bij annulering
   - Neutrale, nette toon
+- [x] **US 13.5** E-mailprovider koppelen (Resend)
+  - Resend SDK geïntegreerd in mail service
+  - Werkt met `RESEND_API_KEY` environment variable
+  - Fallback naar console logging zonder API key
+- [ ] **TODO** Resend account en domein instellen
+  - [ ] Resend account aanmaken op resend.com
+  - [ ] API key genereren
+  - [ ] Domein `orvelterhof.nl` toevoegen en DNS records instellen (SPF, DKIM)
+  - [ ] `RESEND_API_KEY` toevoegen aan Vercel environment variables
+  - [ ] `EMAIL_FROM` instellen op geverifieerd domein-adres
 
 ### Epic 14 – E-mail logging
 
@@ -257,6 +267,40 @@
 
 ---
 
+## Module 11 — Gebruikersbeheer
+
+### Epic 18 – Rollen en toegangsbeheer ✅
+
+- [x] **US 18.1** Rolgebaseerde toegang
+  - Twee rollen: ADMIN (volledig beheer) en USER (regulier gebruik)
+  - Rol opgeslagen in database en meegenomen in JWT sessie
+- [x] **US 18.2** Gebruikersbeheer afschermen voor niet-admins
+  - Alleen ADMIN kan de gebruikersbeheerpagina openen
+  - Server-side autorisatiecheck op alle user management acties
+  - Sidebar toont "Gebruikers" link alleen voor ADMIN
+
+### Epic 19 – Gebruikersbeheer door admin ✅
+
+- [x] **US 19.1** Overzicht van alle gebruikers
+  - Lijst met naam, e-mail, rol, actief/inactief status
+  - Bereikbaar via /settings/users (alleen ADMIN)
+- [x] **US 19.2** Nieuwe gebruiker toevoegen
+  - Formulier met naam, e-mailadres, wachtwoord (min. 8 tekens) en rol
+  - E-mailadres moet uniek zijn
+  - Validatie op alle velden
+- [x] **US 19.3** Gebruiker deactiveren en activeren
+  - Account deactiveren (soft delete) zodat gebruiker niet meer kan inloggen
+  - Account weer activeren
+  - Beveiliging: eigen account niet deactiveren
+- [x] **US 19.4** Wachtwoord resetten door admin
+  - Admin kan nieuw wachtwoord instellen voor een gebruiker
+  - Wachtwoord minimaal 8 tekens
+- [x] **US 19.5** Zelfbescherming voor admin
+  - Admin kan eigen admin-rol niet verwijderen
+  - Admin kan eigen account niet deactiveren
+
+---
+
 ## Post-MVP functionaliteiten
 
 > Onderstaande functionaliteiten zijn bewust buiten scope voor de MVP. De architectuur houdt er waar mogelijk rekening mee.
@@ -266,7 +310,7 @@
 - Channel manager (Airbnb, Booking.com)
 - iCal synchronisatie
 - Multi-property ondersteuning
-- Uitgebreide rollen en rechten
+- Uitgebreide permissies per module (fijnmaziger dan ADMIN/USER)
 - Huishoudelijke workflows
 - Analytics dashboards
 - Meertaligheid
@@ -281,15 +325,16 @@
 |--------|-------|----------|--------|
 | 1. Authenticatie | 3 | 3 | ✅ Compleet |
 | 2. Dashboard | 1 | 1 | ✅ Compleet |
-| 3. Reserveringenbeheer | 3 | 2 | 🔶 Deels klaar |
-| 4. Kalender | 2 | 0 | ⬜ Te bouwen |
-| 5. Website-aanvragen | 1 | 0 | ⬜ Te bouwen |
-| 6. Reserveringsdetail | 2 | 0 | ⬜ Te bouwen |
-| 7. E-mails | 2 | 0 | ⬜ Te bouwen |
-| 8. Prijsbeheer | 1 | 0 | ⬜ Te bouwen |
-| 9. Instellingen | 1 | 0 | ⬜ Te bouwen |
-| 10. Audit | 1 | 0 | ⬜ Te bouwen |
-| **Totaal** | **17** | **6** | **35%** |
+| 3. Reserveringenbeheer | 3 | 3 | ✅ Compleet |
+| 4. Kalender | 2 | 2 | ✅ Compleet |
+| 5. Website-aanvragen | 1 | 1 | ✅ Compleet |
+| 6. Reserveringsdetail | 2 | 2 | ✅ Compleet |
+| 7. E-mails | 2 | 2 | ✅ Compleet |
+| 8. Prijsbeheer | 1 | 1 | ✅ Compleet |
+| 9. Instellingen | 1 | 1 | ✅ Compleet |
+| 10. Audit | 1 | 1 | ✅ Compleet |
+| 11. Gebruikersbeheer | 2 | 2 | ✅ Compleet |
+| **Totaal** | **19** | **19** | **100%** |
 
 
 

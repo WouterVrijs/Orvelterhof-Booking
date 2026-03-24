@@ -1,3 +1,5 @@
+import { Resend } from "resend";
+
 type SendMailOptions = {
   to: string;
   subject: string;
@@ -9,26 +11,37 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3005";
 
 // --- Mail transport ---
 
-// In development: log email to console
-// In production: replace with a real provider (e.g. Resend, Postmark, SES)
 export async function sendMail({ to, subject, html }: SendMailOptions) {
-  if (process.env.NODE_ENV === "production" && process.env.RESEND_API_KEY) {
-    // Production: send via Resend (or any provider)
-    // Swap in your provider's SDK here
-    throw new Error(
-      "Production mail sending not configured. Add RESEND_API_KEY and implement."
-    );
+  const apiKey = process.env.RESEND_API_KEY;
+
+  if (apiKey) {
+    // Send via Resend
+    const resend = new Resend(apiKey);
+    const { error } = await resend.emails.send({
+      from: EMAIL_FROM,
+      to,
+      subject,
+      html,
+    });
+
+    if (error) {
+      console.error("[mail] Resend error:", error);
+      throw new Error(`Failed to send email: ${error.message}`);
+    }
+
+    console.log(`[mail] Sent to ${to}: ${subject}`);
+    return;
   }
 
-  // Development: log to console
+  // No API key: log to console (development fallback)
   console.log("\n========================================");
-  console.log("DEV EMAIL");
+  console.log("DEV EMAIL (no RESEND_API_KEY configured)");
   console.log("========================================");
   console.log(`From:    ${EMAIL_FROM}`);
   console.log(`To:      ${to}`);
   console.log(`Subject: ${subject}`);
   console.log("----------------------------------------");
-  console.log(html.replace(/<[^>]*>/g, "")); // Strip HTML for readability
+  console.log(html.replace(/<[^>]*>/g, ""));
   console.log("========================================\n");
 }
 
