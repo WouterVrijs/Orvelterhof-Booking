@@ -96,6 +96,13 @@ export const reservations = pgTable("reservations", {
   paymentStatus: paymentStatusEnum("payment_status").notNull().default("UNPAID"),
   totalPrice: numeric("total_price", { precision: 10, scale: 2 }),
   amountPaid: numeric("amount_paid", { precision: 10, scale: 2 }).notNull().default("0"),
+  // Borgsom
+  depositAmount: numeric("deposit_amount", { precision: 10, scale: 2 }).notNull().default("0"),
+  depositStatus: varchar("deposit_status", { length: 20 }).notNull().default("PENDING"),
+  depositReceivedAt: date("deposit_received_at"),
+  depositReturnedAt: date("deposit_returned_at"),
+  depositReturnedAmount: numeric("deposit_returned_amount", { precision: 10, scale: 2 }),
+  depositRetentionReason: text("deposit_retention_reason"),
   guestNote: text("guest_note"),
   internalNote: text("internal_note"),
   source: reservationSourceEnum("source").notNull().default("MANUAL"),

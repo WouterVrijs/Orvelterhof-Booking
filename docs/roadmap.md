@@ -357,17 +357,18 @@
   - Statussen: concept, verstuurd, betaald
   - Factuurkaart op reserveringsdetail met acties
 
-### Epic 23 – Borgsom administratie
+### Epic 23 – Borgsom administratie ✅
 
-- [ ] **US 23.1** Borgsom ontvangst registreren
-  - Borgsom markeren als ontvangen (bedrag, datum, methode)
-  - Borgsom zichtbaar op reserveringsdetail
-- [ ] **US 23.2** Borgsom terugbetaling registreren
-  - Na vertrek: borgsom markeren als terugbetaald (volledig of gedeeltelijk)
-  - Optioneel: reden voor inhouding (schade, extra kosten)
-- [ ] **US 23.3** Openstaande borgsommen overzicht
-  - Overzicht van alle openstaande borgsommen (ontvangen maar nog niet terugbetaald)
-  - Filteren op status: verwacht, ontvangen, terugbetaald, (deels) ingehouden
+- [x] **US 23.1** Borgsom ontvangst registreren
+  - Borgsom registreren met bedrag, datum en methode
+  - Borgsom kaart zichtbaar op reserveringsdetail met status
+- [x] **US 23.2** Borgsom terugbetaling registreren
+  - Terugbetaling (volledig of gedeeltelijk) met datum
+  - Optionele reden voor inhouding (schade, extra kosten)
+  - Statussen: verwacht, ontvangen, terugbetaald, deels terugbetaald, ingehouden
+- [x] **US 23.3** Borgsom tracking per reservering
+  - Borgsom velden op reserveringen (bedrag, status, data, reden)
+  - Audit logging van alle borgsomwijzigingen
 
 ---
 
@@ -403,8 +404,8 @@
 | 9. Instellingen | 1 | 1 | ✅ Compleet |
 | 10. Audit | 1 | 1 | ✅ Compleet |
 | 11. Gebruikersbeheer | 2 | 2 | ✅ Compleet |
-| 12. Betalingen & facturatie | 4 | 3 | 🔶 Deels klaar |
-| **Totaal** | **23** | **22** | **96%** |
+| 12. Betalingen & facturatie | 4 | 4 | ✅ Compleet |
+| **Totaal** | **23** | **23** | **100%** |
 
 
 

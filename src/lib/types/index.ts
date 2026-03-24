@@ -49,6 +49,19 @@ export const PAYMENT_STATUS_CONFIG: Record<
   REFUNDED: { label: "Terugbetaald", variant: "info" },
 };
 
+export type DepositStatus = "PENDING" | "RECEIVED" | "RETURNED" | "PARTIAL_RETURN" | "RETAINED";
+
+export const DEPOSIT_STATUS_CONFIG: Record<
+  DepositStatus,
+  { label: string; variant: "info" | "warning" | "success" | "danger" }
+> = {
+  PENDING: { label: "Verwacht", variant: "info" },
+  RECEIVED: { label: "Ontvangen", variant: "warning" },
+  RETURNED: { label: "Terugbetaald", variant: "success" },
+  PARTIAL_RETURN: { label: "Deels terugbetaald", variant: "warning" },
+  RETAINED: { label: "Ingehouden", variant: "danger" },
+};
+
 export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
   BANK_TRANSFER: "Bankoverschrijving",
   CASH: "Contant",

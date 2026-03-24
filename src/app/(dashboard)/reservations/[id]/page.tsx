@@ -9,6 +9,7 @@ import { ReservationDetail } from "@/components/reservations/reservation-detail"
 import { PaymentCard } from "@/components/reservations/payment-card";
 import { MollieActions } from "@/components/reservations/mollie-actions";
 import { InvoiceCard } from "@/components/reservations/invoice-card";
+import { DepositCard } from "@/components/reservations/deposit-card";
 import { AuditHistory } from "@/components/reservations/audit-history";
 import { getAuditLogsForEntity } from "@/lib/services/audit";
 import { getPaymentsForReservation } from "@/lib/actions/payment-actions";
@@ -120,6 +121,17 @@ export default async function ReservationDetailPage({ params }: PageProps) {
         amountPaid={reservation.amountPaid}
         paymentStatus={reservation.paymentStatus}
         isMollieEnabled={isMollieConfigured()}
+      />
+
+      {/* Borgsom */}
+      <DepositCard
+        reservationId={reservation.id}
+        depositAmount={reservation.depositAmount}
+        depositStatus={reservation.depositStatus}
+        depositReceivedAt={reservation.depositReceivedAt}
+        depositReturnedAt={reservation.depositReturnedAt}
+        depositReturnedAmount={reservation.depositReturnedAmount}
+        depositRetentionReason={reservation.depositRetentionReason}
       />
 
       {/* Factuur */}
