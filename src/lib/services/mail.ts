@@ -262,3 +262,55 @@ export function buildCancellationEmail(
   `);
   return { subject, html };
 }
+
+// --- Payment link email ---
+
+export function buildPaymentLinkEmail(data: {
+  firstName: string;
+  reservationNumber: string;
+  amount: number;
+  checkoutUrl: string;
+  arrivalDate: string;
+  departureDate: string;
+}): { subject: string; html: string } {
+  const formattedAmount = new Intl.NumberFormat("nl-NL", {
+    style: "currency",
+    currency: "EUR",
+  }).format(data.amount);
+
+  const subject = `Betaalverzoek — ${data.reservationNumber}`;
+  const html = emailLayout(`
+    <h2>Betaalverzoek</h2>
+    <p>Beste ${data.firstName},</p>
+    <p>Er staat een betaling open voor uw reservering bij Orvelterhof.</p>
+    <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+      <tr>
+        <td style="padding: 8px 0; color: #737373; width: 140px;">Reserveringsnr.</td>
+        <td style="padding: 8px 0; font-weight: 500;">${data.reservationNumber}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; color: #737373;">Aankomst</td>
+        <td style="padding: 8px 0; font-weight: 500;">${data.arrivalDate}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; color: #737373;">Vertrek</td>
+        <td style="padding: 8px 0; font-weight: 500;">${data.departureDate}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; color: #737373;">Te betalen</td>
+        <td style="padding: 8px 0; font-weight: 600; font-size: 16px;">${formattedAmount}</td>
+      </tr>
+    </table>
+    <p>
+      <a href="${data.checkoutUrl}"
+         style="display: inline-block; background: #171717; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 500;">
+        Nu betalen
+      </a>
+    </p>
+    <p style="margin-top: 16px; color: #737373; font-size: 13px;">
+      Klik op de knop hierboven om veilig te betalen via iDEAL, creditcard of andere betaalmethoden.
+    </p>
+    <p>Met vriendelijke groet,<br/>Het Orvelterhof team</p>
+  `);
+  return { subject, html };
+}

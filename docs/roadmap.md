@@ -316,28 +316,29 @@
   - Overzicht van alle betalingen per reservering
   - Betalingsstatus kolom in reserveringslijst
 
-### Epic 21 – Online betalen via Mollie
+### Epic 21 – Online betalen via Mollie ✅
 
-- [ ] **US 21.1** Mollie integratie opzetten
-  - Mollie API koppelen via API key
-  - Betaalmethoden configureren: iDEAL, creditcard, Bancontact
-  - Webhook endpoint voor betalingsstatussen
-- [ ] **US 21.2** Betaallink genereren per reservering
-  - Beheerder kan een betaallink aanmaken voor een reservering (aanbetaling of volledig bedrag)
-  - Link kan gedeeld worden met de gast via e-mail
-  - Betaallink bevat het juiste bedrag en verwijst naar Mollie checkout
-- [ ] **US 21.3** Betaallink versturen naar gast
-  - Automatische e-mail naar gast met betaallink na bevestiging van reservering
-  - Optie om betaallink handmatig opnieuw te versturen
-  - E-mail bevat: bedrag, reserveringsdetails, link naar betaalpagina
-- [ ] **US 21.4** Betalingsstatus automatisch bijwerken via webhook
-  - Mollie webhook ontvangt betalingsupdates (betaald, mislukt, verlopen, terugbetaald)
-  - Betalingsstatus in de app wordt automatisch bijgewerkt
-  - Audit log bij elke statuswijziging
-- [ ] **US 21.5** Terugbetaling via Mollie
-  - Beheerder kan een (deel)terugbetaling initiëren vanuit de app
-  - Terugbetaling wordt via Mollie API verwerkt
-  - Betalingsstatus wordt bijgewerkt naar terugbetaald
+- [x] **US 21.1** Mollie integratie opzetten
+  - Mollie SDK geïnstalleerd en service gebouwd
+  - Webhook endpoint op /api/webhooks/mollie
+- [x] **US 21.2** Betaallink genereren per reservering
+  - Beheerder kan betaallink aanmaken vanuit reserveringsdetail
+  - Link kan gekopieerd en gedeeld worden
+- [x] **US 21.3** Betaallink versturen naar gast
+  - E-mail met betaallink en reserveringsdetails
+  - "Nu betalen" knop in e-mail naar Mollie checkout
+- [x] **US 21.4** Betalingsstatus automatisch bijwerken via webhook
+  - Mollie webhook verwerkt statusupdates (betaald, mislukt, terugbetaald)
+  - Betalingsstatus en bedrag automatisch bijgewerkt
+  - Audit log bij elke wijziging
+- [x] **US 21.5** Terugbetaling via Mollie
+  - (Deel)terugbetaling initiëren vanuit de app
+  - Verwerking via Mollie Refunds API
+- [ ] **TODO** Mollie account en API key instellen
+  - [ ] Mollie account aanmaken op mollie.com
+  - [ ] API key genereren (test + live)
+  - [ ] `MOLLIE_API_KEY` toevoegen aan Vercel environment variables
+  - [ ] Webhook URL instellen in Mollie dashboard
 
 ### Epic 22 – Facturen genereren
 
@@ -401,8 +402,8 @@
 | 9. Instellingen | 1 | 1 | ✅ Compleet |
 | 10. Audit | 1 | 1 | ✅ Compleet |
 | 11. Gebruikersbeheer | 2 | 2 | ✅ Compleet |
-| 12. Betalingen & facturatie | 4 | 1 | 🔶 Deels klaar |
-| **Totaal** | **23** | **20** | **87%** |
+| 12. Betalingen & facturatie | 4 | 2 | 🔶 Deels klaar |
+| **Totaal** | **23** | **21** | **91%** |
 
 
 

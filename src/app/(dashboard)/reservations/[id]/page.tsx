@@ -7,9 +7,11 @@ import { eq, asc } from "drizzle-orm";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ReservationDetail } from "@/components/reservations/reservation-detail";
 import { PaymentCard } from "@/components/reservations/payment-card";
+import { MollieActions } from "@/components/reservations/mollie-actions";
 import { AuditHistory } from "@/components/reservations/audit-history";
 import { getAuditLogsForEntity } from "@/lib/services/audit";
 import { getPaymentsForReservation } from "@/lib/actions/payment-actions";
+import { isMollieConfigured } from "@/lib/services/mollie";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -106,6 +108,15 @@ export default async function ReservationDetailPage({ params }: PageProps) {
         amountPaid={reservation.amountPaid}
         paymentStatus={reservation.paymentStatus}
         payments={paymentsList}
+      />
+
+      {/* Mollie online betalen */}
+      <MollieActions
+        reservationId={reservation.id}
+        totalPrice={reservation.totalPrice}
+        amountPaid={reservation.amountPaid}
+        paymentStatus={reservation.paymentStatus}
+        isMollieEnabled={isMollieConfigured()}
       />
 
       <AuditHistory logs={auditLogs} />

@@ -119,6 +119,8 @@ export const payments = pgTable("payments", {
   amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
   method: paymentMethodEnum("method").notNull(),
   description: varchar("description", { length: 500 }),
+  molliePaymentId: varchar("mollie_payment_id", { length: 100 }),
+  mollieStatus: varchar("mollie_status", { length: 50 }),
   paidAt: date("paid_at").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
