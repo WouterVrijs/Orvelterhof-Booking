@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LogIn, LogOut as LogOutIcon, Home, Users, Activity } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { formatFullName } from "@/lib/utils/format";
 import type { UpcomingReservation, WeekSummary, OccupancyInfo } from "@/lib/services/dashboard";
 
@@ -17,10 +18,11 @@ export function TodayOverview({
   occupancy,
 }: TodayOverviewProps) {
   return (
-    <section className="rounded-xl bg-neutral-50 p-6">
-      <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-neutral-500">
-        Vandaag & deze week
-      </h2>
+    <Card>
+      <CardHeader>
+        <CardTitle>Vandaag & deze week</CardTitle>
+      </CardHeader>
+      <CardContent>
 
       {/* Stats row — borderless blocks */}
       <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
@@ -117,7 +119,8 @@ export function TodayOverview({
           )}
         </div>
       )}
-    </section>
+    </CardContent>
+    </Card>
   );
 }
 

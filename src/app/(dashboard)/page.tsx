@@ -7,6 +7,7 @@ import {
   Plus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { ActionItems } from "@/components/dashboard/action-items";
 import { Notifications } from "@/components/dashboard/notifications";
@@ -58,30 +59,32 @@ export default async function DashboardPage() {
       />
 
       {/* ─── Zone 3: Planning & meldingen ─── */}
-      <section>
-        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-neutral-500">
-          Komende dagen
-        </h2>
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2 space-y-4">
-            <ReservationList
-              title="Aankomende aankomsten"
-              emptyMessage="Geen aankomsten in de komende 7 dagen"
-              reservations={arrivals}
-              dateLabel="Aankomst"
-              dateField="arrivalDate"
-            />
-            <ReservationList
-              title="Aankomende vertrekken"
-              emptyMessage="Geen vertrekken in de komende 7 dagen"
-              reservations={departures}
-              dateLabel="Vertrek"
-              dateField="departureDate"
-            />
+      <Card>
+        <CardHeader>
+          <CardTitle>Komende dagen</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <div className="lg:col-span-2 space-y-4">
+              <ReservationList
+                title="Aankomende aankomsten"
+                emptyMessage="Geen aankomsten in de komende 7 dagen"
+                reservations={arrivals}
+                dateLabel="Aankomst"
+                dateField="arrivalDate"
+              />
+              <ReservationList
+                title="Aankomende vertrekken"
+                emptyMessage="Geen vertrekken in de komende 7 dagen"
+                reservations={departures}
+                dateLabel="Vertrek"
+                dateField="departureDate"
+              />
+            </div>
+            <Notifications notifications={notifications} />
           </div>
-          <Notifications notifications={notifications} />
-        </div>
-      </section>
+        </CardContent>
+      </Card>
 
       {/* ─── Zone 4: Recente reserveringen ─── */}
       <RecentRequests requests={recentRequests} />
