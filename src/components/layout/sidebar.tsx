@@ -24,9 +24,10 @@ const navItems = [
 
 interface SidebarProps {
   userRole: UserRole;
+  accommodationName?: string;
 }
 
-export function Sidebar({ userRole }: SidebarProps) {
+export function Sidebar({ userRole, accommodationName = "Orvelterhof" }: SidebarProps) {
   const pathname = usePathname();
 
   const items = userRole === "ADMIN"
@@ -39,10 +40,10 @@ export function Sidebar({ userRole }: SidebarProps) {
       <div className="flex h-16 items-center border-b border-neutral-200 px-6">
         <Link href="/" className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-900 text-sm font-bold text-white">
-            O
+            {accommodationName.charAt(0).toUpperCase()}
           </div>
-          <span className="text-lg font-semibold text-neutral-900">
-            Orvelterhof
+          <span className="text-lg font-semibold text-neutral-900 truncate">
+            {accommodationName}
           </span>
         </Link>
       </div>
