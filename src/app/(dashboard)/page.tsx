@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   LogIn,
   LogOut as LogOutIcon,
+  Plus,
 } from "lucide-react";
 import {
   Card,
@@ -17,10 +18,14 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { ActionItems } from "@/components/dashboard/action-items";
+import { Notifications } from "@/components/dashboard/notifications";
 import {
   getDashboardStats,
   getUpcomingArrivals,
   getUpcomingDepartures,
+  getActionItems,
+  getNotifications,
   type UpcomingReservation,
 } from "@/lib/services/dashboard";
 import { formatDate } from "@/lib/utils/dates";
@@ -28,14 +33,20 @@ import { formatFullName } from "@/lib/utils/format";
 import type { ReservationStatus } from "@/lib/types";
 
 export default async function DashboardPage() {
-  const [stats, arrivals, departures] = await Promise.all([
-    getDashboardStats(),
-    getUpcomingArrivals(),
-    getUpcomingDepartures(),
-  ]);
+  const [stats, arrivals, departures, actionItems, notifications] =
+    await Promise.all([
+      getDashboardStats(),
+      getUpcomingArrivals(),
+      getUpcomingDepartures(),
+      getActionItems(),
+      getNotifications(),
+    ]);
 
   return (
     <div className="space-y-8">
+      {/* Actie vereist — prominent bovenaan */}
+      <ActionItems items={actionItems} />
+
       {/* Stats */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
@@ -62,22 +73,29 @@ export default async function DashboardPage() {
         />
       </div>
 
-      {/* Upcoming arrivals & departures */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <ReservationList
-          title="Aankomende aankomsten"
-          emptyMessage="Geen aankomsten in de komende 7 dagen"
-          reservations={arrivals}
-          dateLabel="Aankomst"
-          dateField="arrivalDate"
-        />
-        <ReservationList
-          title="Aankomende vertrekken"
-          emptyMessage="Geen vertrekken in de komende 7 dagen"
-          reservations={departures}
-          dateLabel="Vertrek"
-          dateField="departureDate"
-        />
+      {/* Upcoming arrivals & departures + notifications */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 space-y-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <ReservationList
+              title="Aankomende aankomsten"
+              emptyMessage="Geen aankomsten in de komende 7 dagen"
+              reservations={arrivals}
+              dateLabel="Aankomst"
+              dateField="arrivalDate"
+            />
+            <ReservationList
+              title="Aankomende vertrekken"
+              emptyMessage="Geen vertrekken in de komende 7 dagen"
+              reservations={departures}
+              dateLabel="Vertrek"
+              dateField="departureDate"
+            />
+          </div>
+        </div>
+
+        {/* Meldingen sidebar */}
+        <Notifications notifications={notifications} />
       </div>
 
       {/* Quick actions */}
@@ -86,7 +104,12 @@ export default async function DashboardPage() {
           <CardTitle>Snelle acties</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+            <QuickAction
+              href="/reservations/new"
+              icon={<Plus className="h-5 w-5" />}
+              label="Reservering"
+            />
             <QuickAction
               href="/reservations"
               icon={<CalendarCheck className="h-5 w-5" />}

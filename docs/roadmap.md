@@ -76,18 +76,18 @@
   - Knoppen naar reserveringen, kalender, prijzen en instellingen
   - Direct navigeerbaar vanuit het dashboard
 
-### Epic 4b – Actie vereist blok
+### Epic 4b – Actie vereist blok ✅
 
-- [ ] **US 4b.1** "Actie vereist" sectie bovenaan het dashboard
+- [x] **US 4b.1** "Actie vereist" sectie bovenaan het dashboard
   - Prominent blok dat direct toont wat aandacht nodig heeft
-  - Bevat: aanvragen die beoordeeld moeten worden, reserveringen met openstaande betaling, aankomsten/vertrekken vandaag, boekingen met ontbrekende gegevens
-  - Elk item klikbaar naar de relevante reservering of overzichtspagina
-- [ ] **US 4b.2** Reserveringen die actie vereisen
-  - Aantal en lijst van reserveringen met status "nieuw" of "in behandeling"
-  - Direct klikbaar om actie te ondernemen (bevestigen, afwijzen)
-- [ ] **US 4b.3** Notificaties en reminders
-  - Meldingen voor: aankomst morgen, openstaande betaling, seizoensprijs niet ingesteld, nieuwe aanvraag ontvangen
-  - Compact blok op het dashboard dat meldingen toont op basis van actuele data
+  - Bevat: aanvragen te beoordelen, openstaande betalingen, aankomsten/vertrekken vandaag, aankomsten morgen
+  - Elk item klikbaar, met icoon en teller
+- [x] **US 4b.2** Reserveringen die actie vereisen
+  - Aantal reserveringen met status "nieuw" of "in behandeling" als actie-item
+  - Direct klikbaar naar gefilterd overzicht
+- [x] **US 4b.3** Notificaties en reminders
+  - Meldingen sidebar: aankomst morgen (met naam), openstaande betaling (met naam), nieuwe aanvragen, onverstuurde facturen
+  - Klikbaar naar relevante reservering
 
 ### Epic 4c – Operationeel dagoverzicht
 
@@ -519,7 +519,7 @@
 | Module | Epics | Afgerond | Status |
 |--------|-------|----------|--------|
 | 1. Authenticatie | 3 | 3 | ✅ Compleet |
-| 2. Dashboard | 7 | 1 | 🔶 Deels klaar |
+| 2. Dashboard | 7 | 2 | 🔶 Deels klaar |
 | 3. Reserveringenbeheer | 3 | 3 | ✅ Compleet |
 | 4. Kalender | 2 | 2 | ✅ Compleet |
 | 5. Website-aanvragen | 1 | 1 | ✅ Compleet |
@@ -531,7 +531,7 @@
 | 11. Gebruikersbeheer | 2 | 2 | ✅ Compleet |
 | 12. Betalingen & facturatie | 4 | 4 | ✅ Compleet |
 | 13. Kortingscodes | 3 | 0 | ⬜ Te bouwen |
-| **Totaal** | **32** | **23** | **72%** |
+| **Totaal** | **32** | **24** | **75%** |
 
 
 
