@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { LogIn, LogOut as LogOutIcon, Home, Users } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { LogIn, LogOut as LogOutIcon, Home, Users, Activity } from "lucide-react";
 import { formatFullName } from "@/lib/utils/format";
 import type { UpcomingReservation, WeekSummary, OccupancyInfo } from "@/lib/services/dashboard";
 
@@ -19,97 +17,125 @@ export function TodayOverview({
   occupancy,
 }: TodayOverviewProps) {
   return (
-    <div className="space-y-4">
-      {/* Week summary + occupancy */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <MiniStat label="Vandaag in" value={weekSummary.todayArrivals} icon={<LogIn className="h-4 w-4 text-green-600" />} />
-        <MiniStat label="Vandaag uit" value={weekSummary.todayDepartures} icon={<LogOutIcon className="h-4 w-4 text-purple-600" />} />
-        <MiniStat label="Deze week in" value={weekSummary.weekArrivals} icon={<Users className="h-4 w-4 text-blue-600" />} />
-        <MiniStat label="Gasten deze week" value={weekSummary.totalGuestsThisWeek} icon={<Users className="h-4 w-4 text-neutral-600" />} />
-      </div>
+    <section className="rounded-xl bg-neutral-50 p-6">
+      <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-neutral-500">
+        Vandaag & deze week
+      </h2>
 
-      {/* Occupancy indicator */}
-      <Card className={occupancy.isOccupied ? "border-green-200 bg-green-50/30" : "border-neutral-200"}>
-        <CardContent className="flex items-center gap-3 p-4">
-          <Home className={`h-5 w-5 ${occupancy.isOccupied ? "text-green-600" : "text-neutral-400"}`} />
-          {occupancy.isOccupied ? (
-            <div>
-              <p className="text-sm font-medium text-green-800">Bezet</p>
-              <p className="text-xs text-green-700">
-                {occupancy.guestName} · {occupancy.numberOfGuests} gasten · vertrek {occupancy.departureDate}
-              </p>
-            </div>
-          ) : (
-            <p className="text-sm text-neutral-500">Beschikbaar — geen gasten aanwezig</p>
-          )}
-        </CardContent>
-      </Card>
+      {/* Stats row — borderless blocks */}
+      <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
+        <MiniStat
+          label="Vandaag in"
+          value={weekSummary.todayArrivals}
+          icon={<LogIn className="h-3.5 w-3.5 text-green-600" />}
+        />
+        <MiniStat
+          label="Vandaag uit"
+          value={weekSummary.todayDepartures}
+          icon={<LogOutIcon className="h-3.5 w-3.5 text-purple-600" />}
+        />
+        <MiniStat
+          label="Deze week in"
+          value={weekSummary.weekArrivals}
+          icon={<Activity className="h-3.5 w-3.5 text-blue-600" />}
+        />
+        <MiniStat
+          label="Gasten deze week"
+          value={weekSummary.totalGuestsThisWeek}
+          icon={<Users className="h-3.5 w-3.5 text-neutral-500" />}
+        />
+
+        {/* Occupancy inline */}
+        <div className={`flex items-center gap-2.5 rounded-lg px-3 py-2 ${
+          occupancy.isOccupied ? "bg-green-100/60" : "bg-white"
+        }`}>
+          <Home className={`h-3.5 w-3.5 ${occupancy.isOccupied ? "text-green-600" : "text-neutral-400"}`} />
+          <div>
+            <p className={`text-lg font-semibold ${occupancy.isOccupied ? "text-green-800" : "text-neutral-400"}`}>
+              {occupancy.isOccupied ? "Bezet" : "Vrij"}
+            </p>
+            <p className="text-[11px] text-neutral-500 leading-tight">
+              {occupancy.isOccupied
+                ? `${occupancy.guestName?.split(" ")[0]}`
+                : "Beschikbaar"}
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* Today's check-ins and check-outs */}
       {(todayArrivals.length > 0 || todayDepartures.length > 0) && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {todayArrivals.length > 0 && (
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-sm">
-                  <LogIn className="h-4 w-4 text-green-600" />
-                  Inchecken vandaag
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {todayArrivals.map((r) => (
-                    <Link
-                      key={r.id}
-                      href={`/reservations/${r.id}`}
-                      className="flex items-center justify-between rounded-md border border-neutral-100 p-2 text-sm transition-colors hover:bg-neutral-50"
-                    >
-                      <span className="font-medium">{formatFullName(r.firstName, r.lastName)}</span>
-                      <span className="text-xs text-neutral-500">{r.numberOfGuests} gasten</span>
-                    </Link>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <div>
+              <p className="mb-2 flex items-center gap-1.5 text-xs font-medium text-green-700">
+                <LogIn className="h-3 w-3" />
+                Inchecken vandaag
+              </p>
+              <div className="space-y-1.5">
+                {todayArrivals.map((r) => (
+                  <Link
+                    key={r.id}
+                    href={`/reservations/${r.id}`}
+                    className="flex items-center justify-between rounded-md bg-white px-3 py-2 text-sm transition-colors hover:bg-green-50"
+                  >
+                    <span className="font-medium text-neutral-900">
+                      {formatFullName(r.firstName, r.lastName)}
+                    </span>
+                    <span className="text-xs text-neutral-500">
+                      {r.numberOfGuests} {r.numberOfGuests === 1 ? "gast" : "gasten"}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
           )}
 
           {todayDepartures.length > 0 && (
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-sm">
-                  <LogOutIcon className="h-4 w-4 text-purple-600" />
-                  Uitchecken vandaag
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {todayDepartures.map((r) => (
-                    <Link
-                      key={r.id}
-                      href={`/reservations/${r.id}`}
-                      className="flex items-center justify-between rounded-md border border-neutral-100 p-2 text-sm transition-colors hover:bg-neutral-50"
-                    >
-                      <span className="font-medium">{formatFullName(r.firstName, r.lastName)}</span>
-                      <span className="text-xs text-neutral-500">{r.numberOfGuests} gasten</span>
-                    </Link>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <div>
+              <p className="mb-2 flex items-center gap-1.5 text-xs font-medium text-purple-700">
+                <LogOutIcon className="h-3 w-3" />
+                Uitchecken vandaag
+              </p>
+              <div className="space-y-1.5">
+                {todayDepartures.map((r) => (
+                  <Link
+                    key={r.id}
+                    href={`/reservations/${r.id}`}
+                    className="flex items-center justify-between rounded-md bg-white px-3 py-2 text-sm transition-colors hover:bg-purple-50"
+                  >
+                    <span className="font-medium text-neutral-900">
+                      {formatFullName(r.firstName, r.lastName)}
+                    </span>
+                    <span className="text-xs text-neutral-500">
+                      {r.numberOfGuests} {r.numberOfGuests === 1 ? "gast" : "gasten"}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
           )}
         </div>
       )}
-    </div>
+    </section>
   );
 }
 
-function MiniStat({ label, value, icon }: { label: string; value: number; icon: React.ReactNode }) {
+function MiniStat({
+  label,
+  value,
+  icon,
+}: {
+  label: string;
+  value: number;
+  icon: React.ReactNode;
+}) {
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-white p-3">
+    <div className="flex items-center gap-2.5 rounded-lg bg-white px-3 py-2">
       {icon}
       <div>
-        <p className="text-lg font-semibold">{value}</p>
-        <p className="text-xs text-neutral-500">{label}</p>
+        <p className="text-lg font-semibold text-neutral-900">{value}</p>
+        <p className="text-[11px] text-neutral-500 leading-tight">{label}</p>
       </div>
     </div>
   );
