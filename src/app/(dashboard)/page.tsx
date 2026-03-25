@@ -20,12 +20,19 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { ActionItems } from "@/components/dashboard/action-items";
 import { Notifications } from "@/components/dashboard/notifications";
+import { TodayOverview } from "@/components/dashboard/today-overview";
+import { RecentRequests } from "@/components/dashboard/recent-requests";
 import {
   getDashboardStats,
   getUpcomingArrivals,
   getUpcomingDepartures,
   getActionItems,
   getNotifications,
+  getTodayArrivals,
+  getTodayDepartures,
+  getWeekSummary,
+  getCurrentOccupancy,
+  getRecentRequests,
   type UpcomingReservation,
 } from "@/lib/services/dashboard";
 import { formatDate } from "@/lib/utils/dates";
@@ -33,19 +40,34 @@ import { formatFullName } from "@/lib/utils/format";
 import type { ReservationStatus } from "@/lib/types";
 
 export default async function DashboardPage() {
-  const [stats, arrivals, departures, actionItems, notifications] =
-    await Promise.all([
+  const [
+    stats, arrivals, departures, actionItems, notifications,
+    todayArr, todayDep, weekSummary, occupancy, recentRequests,
+  ] = await Promise.all([
       getDashboardStats(),
       getUpcomingArrivals(),
       getUpcomingDepartures(),
       getActionItems(),
       getNotifications(),
+      getTodayArrivals(),
+      getTodayDepartures(),
+      getWeekSummary(),
+      getCurrentOccupancy(),
+      getRecentRequests(),
     ]);
 
   return (
     <div className="space-y-8">
       {/* Actie vereist — prominent bovenaan */}
       <ActionItems items={actionItems} />
+
+      {/* Operationeel dagoverzicht */}
+      <TodayOverview
+        todayArrivals={todayArr}
+        todayDepartures={todayDep}
+        weekSummary={weekSummary}
+        occupancy={occupancy}
+      />
 
       {/* Stats */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -97,6 +119,9 @@ export default async function DashboardPage() {
         {/* Meldingen sidebar */}
         <Notifications notifications={notifications} />
       </div>
+
+      {/* Recente reserveringen */}
+      <RecentRequests requests={recentRequests} />
 
       {/* Quick actions */}
       <Card>

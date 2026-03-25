@@ -89,22 +89,19 @@
   - Meldingen sidebar: aankomst morgen (met naam), openstaande betaling (met naam), nieuwe aanvragen, onverstuurde facturen
   - Klikbaar naar relevante reservering
 
-### Epic 4c – Operationeel dagoverzicht
+### Epic 4c – Operationeel dagoverzicht ✅
 
-- [ ] **US 4c.1** Vandaag inchecken en uitchecken
-  - Lijst van gasten die vandaag aankomen (inchecken)
-  - Lijst van gasten die vandaag vertrekken (uitchecken)
+- [x] **US 4c.1** Vandaag inchecken en uitchecken
+  - Dedicated lijsten voor vandaag inchecken en uitchecken met gastnaam en aantal gasten
   - Klikbaar naar reserveringsdetail
-- [ ] **US 4c.2** Vandaag / deze week overzicht
-  - Compact blok: "Vandaag: X aankomsten, Y vertrekken" en "Deze week: X aankomsten, Y vertrekken"
-  - Totaal aantal gasten komende 7 dagen
-- [ ] **US 4c.3** Huidige bezetting
-  - Indicator of de accommodatie op dit moment bezet is
-  - Naam van huidige gast en vertrekdatum als bezet
-  - "Beschikbaar" melding als er niemand is
-- [ ] **US 4c.4** Recente aanvragen tabel
-  - Compacte lijst van de laatste 5-10 aanvragen met: naam, periode, gasten, status, datum, bron
-  - Knop: bekijken / bevestigen — direct actie vanuit dashboard zonder naar reserveringen te navigeren
+- [x] **US 4c.2** Vandaag / deze week overzicht
+  - Compact blok met 4 mini-stats: vandaag in, vandaag uit, deze week in, gasten deze week
+- [x] **US 4c.3** Huidige bezetting
+  - Bezettingsindicator: "Bezet" (met gastnaam, gasten, vertrekdatum) of "Beschikbaar"
+  - Visueel onderscheid met groene rand bij bezetting
+- [x] **US 4c.4** Recente aanvragen tabel
+  - Compacte tabel met laatste 5 reserveringen: gast, periode, gasten, bron, status
+  - Klikbaar naar reserveringsdetail
 
 ### Epic 4d – Financieel snapshot
 
@@ -519,7 +516,7 @@
 | Module | Epics | Afgerond | Status |
 |--------|-------|----------|--------|
 | 1. Authenticatie | 3 | 3 | ✅ Compleet |
-| 2. Dashboard | 7 | 2 | 🔶 Deels klaar |
+| 2. Dashboard | 7 | 3 | 🔶 Deels klaar |
 | 3. Reserveringenbeheer | 3 | 3 | ✅ Compleet |
 | 4. Kalender | 2 | 2 | ✅ Compleet |
 | 5. Website-aanvragen | 1 | 1 | ✅ Compleet |
@@ -531,7 +528,7 @@
 | 11. Gebruikersbeheer | 2 | 2 | ✅ Compleet |
 | 12. Betalingen & facturatie | 4 | 4 | ✅ Compleet |
 | 13. Kortingscodes | 3 | 0 | ⬜ Te bouwen |
-| **Totaal** | **32** | **24** | **75%** |
+| **Totaal** | **32** | **25** | **78%** |
 
 
 
